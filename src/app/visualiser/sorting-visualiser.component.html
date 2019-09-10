@@ -1,0 +1,2 @@
+<div *ngFor="let number of arr; let i = index;" [ngClass]="[isCurrent(i), isNext(i), isCompleted(i)]"> {{number}}</div>
+<div (click)="sort()" [ngClass]="[rnd()]">sortME!!</div>

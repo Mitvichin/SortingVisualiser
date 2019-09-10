@@ -1,0 +1,18 @@
+.curr{
+background-color: red;
+}
+
+.next{
+background-color: green;
+}
+
+.rnd{
+    background-color: yellow;
+ &::after{
+    content: 'pivot';    
+ }
+}
+
+.completed{
+    background-color: purple;
+}
