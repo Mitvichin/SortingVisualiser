@@ -14,9 +14,8 @@ export function visualiserReducer(state = initialState, action: VisualiserAction
                 array: action.payload
             }
         default:
-            return {
-                initialState
-            }
+            return state;
+            
 
         
     }
