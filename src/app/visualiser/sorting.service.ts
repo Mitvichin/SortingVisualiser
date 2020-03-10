@@ -63,7 +63,6 @@ export class SortingService {
         // let temp = arr[i];
         // arr[i] = arr[j];
         // arr[j] = temp;
-        // console.log(arr)
       }
     }
     console.log(arr[i + 1] + " and " + arr[high])
@@ -71,8 +70,6 @@ export class SortingService {
     // let temp1 = arr[i+1];
     // arr[i+1] = arr[high];
     // arr[high] = temp1;
-    console.log(arr)
-
     return i + 1;
   }
 
@@ -102,7 +99,7 @@ export class SortingService {
 
     if (completedIndex>=0){
       this.visModel.completedIndexes.push(completedIndex)
-      console.log(completedIndex + "in sortgin service completedIndex")
+      //console.log(completedIndex + "in sortgin service completedIndex")
     }
 
     this.itemsToBeChanged.next(this.visModel);

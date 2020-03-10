@@ -1,6 +1,8 @@
 import { Component, OnInit, ChangeDetectorRef, ChangeDetectionStrategy } from '@angular/core';
 import { SortingService } from './sorting.service';
 import { VisualisationModel } from '../models/VisualisationModel';
+import { Store } from '@ngrx/store';
+import {visualiserReducer } from "./store/visualiser.reducer";
 
 @Component({
   selector: 'app-sorting-visualser',
@@ -9,18 +11,21 @@ import { VisualisationModel } from '../models/VisualisationModel';
 
 })
 export class SortingVisualiserComponent implements OnInit {
-  arr: number[] = [45,10, 80, 30, 29, 90, 40, 50, 70]
+  arr: number[];
   itemsToBeChanged: VisualisationModel;
-  constructor(private sortingService: SortingService, private ref: ChangeDetectorRef) { }
+  constructor(private sortingService: SortingService, private ref: ChangeDetectorRef ,
+    private store: Store<{visualiser: {array: number[]}}>) {
 
+   }
+   
   ngOnInit() {
-    this.sortingService.itemsToBeChanged.subscribe((items) => {
-      this.itemsToBeChanged = items;
-      //console.log(this.changedElementIndex);
-    })
     this.ref.detach();
     this.ref.detectChanges()
     console.log(this.arr);
+
+    this.store.select('visualiser').subscribe(data =>{
+      this.arr = data.array;
+    })
   }
 
   async sort() {
