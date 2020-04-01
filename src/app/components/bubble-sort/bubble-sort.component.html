@@ -1,0 +1,6 @@
+<div *ngIf="result">
+    <div #arrContainer  >
+        <div *ngFor="let step of tempStep.arr; let i = index;" class="default">{{step}}</div>
+    </div>
+</div>
+<div (click)="sort()" [ngClass]="[rnd()]">sortME!!</div>

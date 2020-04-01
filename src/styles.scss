@@ -1,1 +1,30 @@
 /* You can add global styles to this file, and also import other style files */
+.curr {
+    background-color: red !important;
+}
+
+.next {
+    background-color: green !important;
+}
+
+.completed {
+    background-color: purple !important;
+}
+
+.completed.next {
+    background-color: green !important;
+}
+
+.completed.curr {
+    background-color: red !important;
+}
+
+.default {
+    transition: 0.5s ease-in-out;
+    transform: translate(0, 0);
+    width: 100px;
+    text-align: center;
+    display: inline-block;
+    margin: 0 10px;
+    background-color: white;
+}

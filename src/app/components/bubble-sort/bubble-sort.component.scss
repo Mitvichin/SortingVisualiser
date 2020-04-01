@@ -1,0 +1,6 @@
+.rnd {
+   background-color: yellow;
+   &::after {
+      content: "pivot";
+   }
+}

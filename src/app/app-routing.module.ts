@@ -1,9 +1,9 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
-import { SortingVisualiserComponent } from './visualiser/sorting-visualiser.component';
+import { BubbleSortComponent } from './components/bubble-sort/bubble-sort.component';
 
 const routes: Routes = [
-  {path:"",component:SortingVisualiserComponent},
+  {path:"",component:BubbleSortComponent},
 ];
 
 @NgModule({
