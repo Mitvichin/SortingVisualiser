@@ -1,18 +1,17 @@
 import { Component, OnInit, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { BubbleSortService } from './bubble-sort.service';
+import { SelectionSortService } from './selection-sort.service';
+import { SelectionSortStep } from 'src/app/models/selection-sort/SelectionSortStep';
+import { ComparedCouple } from 'src/app/models/shared/ComparedCouple';
 import { Store } from '@ngrx/store';
-import { BubbleSortStep } from '../../models/bubble-sort/BubbleSortStep';
-import { ComparedCouple } from '../../models/shared/ComparedCouple';
-import * as fromApp from '../../store/app.reducer';
-import { delay } from '../../utils/delay';
-import { ascendingSort, descendingSort } from '../../shared/functions/sorting-predicates';
+import { delay } from 'src/app/utils/delay';
+import * as fromApp from './../../store/app.reducer';
 
 @Component({
-  selector: 'bubble-sorting-visualser',
-  templateUrl: './bubble-sort.component.html',
-  styleUrls: ['./bubble-sort.component.scss'],
+  selector: 'app-selection-sort',
+  templateUrl: './selection-sort.component.html',
+  styleUrls: ['./selection-sort.component.scss']
 })
-export class BubbleSortComponent implements OnInit, AfterViewInit {
+export class SelectionSortComponent implements OnInit, AfterViewInit {
   @ViewChild('arrContainer') arrContainer: ElementRef;
   arrDomChildren: any;
   itemSwapDistance: number = 0;
@@ -21,32 +20,43 @@ export class BubbleSortComponent implements OnInit, AfterViewInit {
   illustrativeArr: number[];
 
   constructor(
-    private sortService: BubbleSortService,
     private store: Store<fromApp.AppState>,
+    private sortService: SelectionSortService,
     private renderer: Renderer2, ) { }
 
   ngOnInit(): void {
-    this.store.select('bubbleSort').subscribe(data => {
-      this.illustrativeArr = [...data.currentArray];
+    this.store.select('selectionSort').subscribe(data => {
+      this.illustrativeArr = [...data.currentArr];
       this.visualise(data.sortingHistory);
     })
   }
 
   ngAfterViewInit(): void {
+    console.log(this.arrContainer)
     this.arrDomChildren = this.arrContainer.nativeElement.children;
   }
 
-  async visualise(bubbleSortHistory: BubbleSortStep[]) {
-    if (bubbleSortHistory.length > 0) {
+  async visualise(sortHistory: SelectionSortStep[]) {
+    if (sortHistory.length > 0) {
       //used for of because it can be async
-      for (const { i, el } of bubbleSortHistory.map((el, i) => ({ i, el }))) {
+      for (const { i, el } of sortHistory.map((el, i) => ({ i, el }))) {
         this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
         // increases the speed of the iteration
         await delay(this.iterationSpeed);
+
+        // initialises them temporary step
         this.illustrativeArr = [...el.startingArr];
 
+        // visualizes the two compared numbers
         this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'curr');
         this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'next');
+
+        // visualizes the swaping index in the array
+        await delay(500)
+        this.renderer.addClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
+        await delay(600)
+        this.renderer.removeClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
+
         if (el.didSwap) {
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
@@ -54,6 +64,7 @@ export class BubbleSortComponent implements OnInit, AfterViewInit {
 
         await delay(500);
         this.illustrativeArr = [...el.resultArr];
+
         if (el.didSwap) {
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '0s');
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '0s');
@@ -67,15 +78,17 @@ export class BubbleSortComponent implements OnInit, AfterViewInit {
         this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'curr');
         this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'next');
         this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'curr');
+
         if (el.didSwap) {
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '.5s ease-in-out');
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '.5s ease-in-out');
         }
 
         if (el.isCompleted) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'completed');
-          if (i === bubbleSortHistory.length - 1) {
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
+          if (i === sortHistory.length - 1) {
             this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
+            this.renderer.addClass(this.arrDomChildren[el.resultArr.length - 1], 'completed');
           }
         }
       }
@@ -83,11 +96,7 @@ export class BubbleSortComponent implements OnInit, AfterViewInit {
   }
 
   async sort() {
-    this.sortService.bubleSort(this.illustrativeArr, ascendingSort);
-    //this.sortingService.selectionSort(this.tempStep.arr);
+    this.sortService.selectionSort(this.illustrativeArr);
   }
 
-  rnd() {
-    return "rnd";
-  }
 }

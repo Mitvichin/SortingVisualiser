@@ -16,4 +16,6 @@ export class AddBubbleSortHistory implements Action {
     constructor(public payload: BubbleSortStep[]) { }
 }
 
-export type fromBubbleSortActions = AddArr | AddBubbleSortHistory;
+export type BubbleSortActions =
+    AddArr
+    | AddBubbleSortHistory;

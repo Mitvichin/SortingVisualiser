@@ -1,0 +1,10 @@
+.rnd {
+   background-color: yellow;
+   &::after {
+      content: "pivot";
+   }
+}
+
+.swapIndex {
+   background-color: #0099ff !important;
+}

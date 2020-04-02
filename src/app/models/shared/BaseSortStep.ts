@@ -1,9 +1,11 @@
 import { ComparedCouple } from './ComparedCouple';
 
-export class BaseSortClass{
-    comparedCouple: ComparedCouple;
-    didSwap: boolean;
-    startingArr: number[];
-    resultArr: number[];
-    isCompleted: boolean
+export class BaseSortClass {
+    constructor(
+        public comparedCouple?: ComparedCouple,
+        public didSwap?: boolean,
+        public startingArr?: number[],
+        public resultArr?: number[],
+        public isCompleted?: boolean,
+    ) { }
 }
