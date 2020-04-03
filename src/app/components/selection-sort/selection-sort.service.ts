@@ -22,15 +22,16 @@ export class SelectionSortService {
       let minIndex = i;
       for (let j = i + 1; j < arr.length; j++) {
         tempComparedCouple = { x: arr[minIndex], y: arr[j], indexX: minIndex, indexY: j };
-        this.sortingStep = new SelectionSortStep(i,arr[i],tempComparedCouple,false,[...arr],[...arr],false);
-        this.sortingHistory.push(this.sortingStep);
+        
         if (arr[minIndex] > arr[j]) {
           minIndex = j;
         }
+        this.sortingStep = new SelectionSortStep(i,minIndex,tempComparedCouple,false,[...arr],[...arr],false);
+        this.sortingHistory.push(this.sortingStep);
       }
 
       tempComparedCouple = { x: arr[i], y: arr[minIndex], indexX: i, indexY: minIndex };
-      this.sortingStep = new SelectionSortStep(i, arr[i], tempComparedCouple, true, [...arr], undefined, true);
+      this.sortingStep = new SelectionSortStep(i,minIndex, tempComparedCouple, true, [...arr], undefined, true);
       swapElements(i, minIndex, arr)
       this.sortingStep.resultArr = [...arr];
       this.sortingHistory.push(this.sortingStep);

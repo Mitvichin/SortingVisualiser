@@ -4,7 +4,7 @@ import { ComparedCouple } from '../shared/ComparedCouple';
 export class SelectionSortStep extends BaseSortClass {
 
     constructor(public swapIndex?: number,
-        public swapIndexValue?: number,
+        public minValueIndex?:number,
         comparedCouple?: ComparedCouple,
         didSwap?: boolean,
         startingArr?: number[],

@@ -16,7 +16,7 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
   arrDomChildren: any;
   itemSwapDistance: number = 0;
   DOMElWidth: number = 120;
-  iterationSpeed: number = 0; // in milliseconds
+  iterationSpeed: number = 1000; // in milliseconds
   illustrativeArr: number[];
 
   constructor(
@@ -56,11 +56,16 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
         this.renderer.addClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
         await delay(600)
         this.renderer.removeClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
+        await delay(500)
+        this.renderer.addClass(this.arrDomChildren[el.minValueIndex], 'smallestNumber')
 
         if (el.didSwap) {
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
         }
+
+        await delay(500);
+        this.renderer.removeClass(this.arrDomChildren[el.minValueIndex], 'smallestNumber');
 
         await delay(500);
         this.illustrativeArr = [...el.resultArr];
