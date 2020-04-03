@@ -1,9 +1,8 @@
 import { BaseSortStep } from '../shared/BaseSortStep';
 import { ComparedCouple } from '../shared/ComparedCouple';
 
-export class SelectionSortStep extends BaseSortStep {
-
-    constructor(public swapIndex?: number,
+export class QuickSortStep extends BaseSortStep {
+    constructor(public pivotIndex?: number,
         public minValueIndex?: number,
         comparedCouple?: ComparedCouple,
         didSwap?: boolean,

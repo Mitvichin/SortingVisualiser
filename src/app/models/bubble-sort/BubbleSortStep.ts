@@ -1,5 +1,5 @@
-import { BaseSortClass } from '../shared/BaseSortStep';
+import { BaseSortStep } from '../shared/BaseSortStep';
 
-export class BubbleSortStep extends BaseSortClass {
+export class BubbleSortStep extends BaseSortStep {
 }
 

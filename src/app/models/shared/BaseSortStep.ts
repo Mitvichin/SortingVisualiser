@@ -1,6 +1,6 @@
 import { ComparedCouple } from './ComparedCouple';
 
-export class BaseSortClass {
+export class BaseSortStep {
     constructor(
         public comparedCouple?: ComparedCouple,
         public didSwap?: boolean,

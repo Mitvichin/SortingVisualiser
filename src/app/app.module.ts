@@ -9,12 +9,14 @@ import { StoreDevtoolsModule } from '@ngrx/store-devtools';
 import { environment } from './../environments/environment';
 import * as fromApp from './store/app.reducer';
 import { SelectionSortComponent } from './components/selection-sort/selection-sort.component';
+import { QuickSortComponent } from './components/quick-sort/quick-sort.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     BubbleSortComponent,
     SelectionSortComponent,
+    QuickSortComponent,
   ],
   imports: [
     BrowserModule,
