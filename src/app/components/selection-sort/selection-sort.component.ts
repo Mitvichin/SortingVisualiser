@@ -7,7 +7,7 @@ import { delay } from 'src/app/utils/delay';
 import * as fromApp from './../../store/app.reducer';
 
 @Component({
-  selector: 'app-selection-sort',
+  selector: 'selection-sort',
   templateUrl: './selection-sort.component.html',
   styleUrls: ['./selection-sort.component.scss']
 })
@@ -38,6 +38,7 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
 
   async visualise(sortHistory: SelectionSortStep[]) {
     if (sortHistory.length > 0) {
+      let smallestIndex = -1;
       //used for of because it can be async
       for (const { i, el } of sortHistory.map((el, i) => ({ i, el }))) {
         this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
@@ -46,26 +47,32 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
 
         // initialises them temporary step
         this.illustrativeArr = [...el.startingArr];
-
-        // visualizes the two compared numbers
-        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'curr');
-        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'next');
-
-        // visualizes the swaping index in the array
-        await delay(500)
+        
         this.renderer.addClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
-        await delay(600)
-        this.renderer.removeClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
         await delay(500)
-        this.renderer.addClass(this.arrDomChildren[el.minValueIndex], 'smallestNumber')
+        // visualizes the two compared numbers
+        if(!el.didSwap){
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
+        }
+
+        if(smallestIndex !== el.minValueIndex && smallestIndex !== -1){
+          await delay(200)
+          this.renderer.removeClass(this.arrDomChildren[smallestIndex], 'smallestNumber');
+        }
+        // visualizes the swaping index in the array
+        await delay(600)
+        smallestIndex = el.minValueIndex;
+        this.renderer.addClass(this.arrDomChildren[smallestIndex], 'smallestNumber')
 
         if (el.didSwap) {
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
+          await delay(300)
+          this.renderer.removeClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
         }
 
-        await delay(500);
-        this.renderer.removeClass(this.arrDomChildren[el.minValueIndex], 'smallestNumber');
+        
 
         await delay(500);
         this.illustrativeArr = [...el.resultArr];
@@ -79,10 +86,10 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
         }
 
         await delay(200);
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'next');
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'curr');
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'next');
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'curr');
+        if(!el.didSwap){
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
+        }
 
         if (el.didSwap) {
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '.5s ease-in-out');
@@ -91,6 +98,7 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
 
         if (el.isCompleted) {
           this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'smallestNumber');
           if (i === sortHistory.length - 1) {
             this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
             this.renderer.addClass(this.arrDomChildren[el.resultArr.length - 1], 'completed');

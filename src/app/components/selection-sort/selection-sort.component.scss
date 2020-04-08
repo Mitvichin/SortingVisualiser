@@ -5,10 +5,20 @@
    }
 }
 
-.swapIndex {
+.swapIndex:after {
+   content: "";
+   position: absolute;
+   height: 4px;
+   width: 100%;
+   bottom: -4px;
    background-color: #0099ff !important;
 }
 
-.smallestNumber {
+.smallestNumber:before {
+   content: "";
+   position: absolute;
+   height: 4px;
+   width: 100%;
+   top: -4px;
    background-color: #99cc00 !important;
 }

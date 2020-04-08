@@ -1,0 +1,12 @@
+.pivot:after {
+    content: "";
+    position: absolute;
+    height: 4px;
+    width: 100%;
+    bottom: -4px;
+    background-color: #ff66ff !important;
+}
+
+.itemToSwap {
+    background-color: #ffff00 !important;
+}

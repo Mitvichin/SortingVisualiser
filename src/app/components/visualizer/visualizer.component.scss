@@ -1,0 +1,40 @@
+.visualizer {
+    background-color: #363062;
+    height: 100%;
+    padding-left: 1rem;
+    padding-right: 1rem;
+    margin: 0 auto;
+    width: 100%;
+    padding-bottom: 2rem;
+}
+
+.btn {
+    background-color: #827397 !important;
+    color: #f8f9fd;
+    font-weight: 500;
+    transition: 0.3s ease-in-out;
+    transform: scale(1);
+}
+
+.btn:hover {
+    transform: scale(1.15);
+}
+
+.content {
+    height: 90%;
+    width: 95%;
+    background-color: #f8f9fd;
+    align-self: center;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+}
+
+.btn-container{
+    width: 95%;
+    align-self: center;
+}
+
+.play-img{
+    width:1rem;
+    height: auto;
+}

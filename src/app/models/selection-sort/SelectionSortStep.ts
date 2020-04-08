@@ -11,10 +11,10 @@ export class SelectionSortStep extends BaseSortStep {
         resultArr?: number[],
         isCompleted?: boolean, ) {
 
-        super(comparedCouple ? comparedCouple : undefined,
-            didSwap ? didSwap : undefined,
-            startingArr ? startingArr : undefined,
-            resultArr ? resultArr : undefined,
-            isCompleted ? isCompleted : undefined);
+        super(comparedCouple,
+            didSwap,
+            startingArr,
+            resultArr,
+            isCompleted);
     }
 }

@@ -7,7 +7,7 @@ export interface State {
 }
 
 const initialState: State = {
-    currentArray: [6, 5, 4, 3, 2, 1],
+    currentArray: [100, 6, 4, 3, 2, 1],
     sortingHistory: [] = new Array<BubbleSortStep>(),
 }
 

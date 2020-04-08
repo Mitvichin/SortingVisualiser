@@ -1,1 +1,7 @@
-<p>quick-sort works!</p>
+<div class="row align-items-center flex-column">
+    <div class="p-4" *ngIf="illustrativeArr">
+        <div #arrContainer>
+            <div *ngFor="let step of illustrativeArr; let i = index;" class="default">{{step}}</div>
+        </div>
+    </div>
+</div>
