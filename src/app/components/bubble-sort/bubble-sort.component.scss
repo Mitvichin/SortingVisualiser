@@ -1,11 +1,3 @@
-.rnd {
-   background-color: yellow;
-   &::after {
-      content: "pivot";
-   }
-}
-
-
 .comparedCouple.itemToSwap {
    background-color: green !important;
 }

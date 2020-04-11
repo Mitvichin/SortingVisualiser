@@ -1,40 +1,48 @@
-import { Component, OnInit, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { BubbleSortService } from './bubble-sort.service';
 import { Store } from '@ngrx/store';
 import { BubbleSortStep } from '../../models/bubble-sort/BubbleSortStep';
-import { ComparedCouple } from '../../models/shared/ComparedCouple';
 import * as fromApp from '../../store/app.reducer';
-import { delay } from '../../utils/delay';
-import { ascendingSort, descendingSort } from '../../shared/functions/sorting-predicates';
+import * as fromBubbleSortActions from '../bubble-sort/store/bubble-sort.actions';
+import { delay } from '../../shared/utils/delay';
+import { ascendingSort, descendingSort } from '../../shared/utils/sorting-predicates';
+import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
+import { Subscription } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
+import { BaseComponent } from 'src/app/shared/components/base/base.component';
 
 @Component({
   selector: 'bubble-sort',
   templateUrl: './bubble-sort.component.html',
   styleUrls: ['./bubble-sort.component.scss'],
 })
-export class BubbleSortComponent implements OnInit, AfterViewInit {
+export class BubbleSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('arrContainer') arrContainer: ElementRef;
   arrDomChildren: any;
   itemSwapDistance: number = 0;
   DOMElWidth: number = 120;
-  iterationSpeed: number = 0; // in milliseconds
+  iterationSpeed: number = 1000; // in milliseconds
   illustrativeArr: number[];
+  asd: Subscription;
 
   constructor(
     private sortService: BubbleSortService,
     private store: Store<fromApp.AppState>,
-    private renderer: Renderer2, ) { }
+    private renderer: Renderer2, ) {
+    super();
+  }
+
 
   ngOnInit(): void {
-    this.store.select('bubbleSort').subscribe(data => {
+    this.asd = this.store.select('bubbleSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
       this.illustrativeArr = [...data.currentArray];
       this.visualise(data.sortingHistory);
     })
   }
 
-   ngAfterViewInit() {
+  ngAfterViewInit() {
     this.arrDomChildren = this.arrContainer.nativeElement.children;
-     this.calculateElHeight();
+    calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[])
   }
 
   async visualise(bubbleSortHistory: BubbleSortStep[]) {
@@ -91,35 +99,11 @@ export class BubbleSortComponent implements OnInit, AfterViewInit {
   }
 
   async sort() {
-    this.sortService.bubleSort(this.illustrativeArr, descendingSort);
-    //this.sortingService.selectionSort(this.tempStep.arr);
+    this.sortService.bubleSort(this.illustrativeArr, ascendingSort);
   }
 
-  async calculateElHeight() {
-    let valueOfArr = 0,
-      unit = 0;
-    for (let index = 0; index < this.arrDomChildren.length; index++) {
-      valueOfArr += +this.arrDomChildren[index].innerHTML;
-    }
-    unit = 95 / valueOfArr;
-    
-    
-    for (const el of this.arrDomChildren) {
-      console.log(+el.innerHTML)
-      this.renderer.setStyle(el, 'transition', 'none');
-      this.renderer.setStyle(el, 'opacity', '0');
-      this.renderer.setStyle(el, 'height', `${+el.innerHTML * unit}%`);
-      let temp = el.getBoundingClientRect().height;
-      this.renderer.setStyle(el, 'height', `0px`);
-      await delay(50)
-      this.renderer.setStyle(el, 'transition', '0.5s ease-out');
-      this.renderer.setStyle(el, 'opacity', '1');
-      this.renderer.setStyle(el, 'height', `${temp +28}px`);
-    }
-
-  }
-
-  rnd() {
-    return "rnd";
+  ngOnDestroy(): void {
+    this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory());
+    super.ngOnDestroy();
   }
 }

@@ -23,6 +23,11 @@ export function quickSortReducer(state: State = initialState, action: fromQuickS
                 ...state,
                 sortingHistory: action.payload
             }
+        case fromQuickSortActions.DELETE_QUICK_SORT_HISTORY:
+            return {
+                ...state,
+                sortingHistory: []
+            }
         default:
             return initialState;
     }

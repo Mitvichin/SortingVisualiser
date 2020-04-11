@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { Subject } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { BubbleSortStep } from '../../models/bubble-sort/BubbleSortStep';
-import { swapElements } from '../../utils/swapElements';
+import { swapElements } from '../../shared/utils/swap-elements';
 import * as fromBubbleSortActions from './store/bubble-sort.actions';
 import * as fromApp from '../../store/app.reducer';
 

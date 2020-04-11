@@ -24,6 +24,11 @@ export function bubbleSortReducer(state = initialState, action: fromBubbleSortAc
                 ...state,
                 sortingHistory: action.payload
             }
+        case fromBubbleSortActions.DELETE_BUBBLE_SORT_HISTORY:
+            return {
+                ...state,
+                sortingHistory: []
+            }
         default:
             return state;
 

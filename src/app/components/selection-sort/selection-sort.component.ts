@@ -1,17 +1,20 @@
-import { Component, OnInit, Renderer2, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Renderer2, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { SelectionSortService } from './selection-sort.service';
 import { SelectionSortStep } from 'src/app/models/selection-sort/SelectionSortStep';
-import { ComparedCouple } from 'src/app/models/shared/ComparedCouple';
 import { Store } from '@ngrx/store';
-import { delay } from 'src/app/utils/delay';
+import { delay } from 'src/app/shared/utils/delay';
 import * as fromApp from './../../store/app.reducer';
+import * as fromSelectionSortActions from './store/selection-sort.actions';
+import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
+import { BaseComponent } from 'src/app/shared/components/base/base.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'selection-sort',
   templateUrl: './selection-sort.component.html',
   styleUrls: ['./selection-sort.component.scss']
 })
-export class SelectionSortComponent implements OnInit, AfterViewInit {
+export class SelectionSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('arrContainer') arrContainer: ElementRef;
   arrDomChildren: any;
   itemSwapDistance: number = 0;
@@ -22,10 +25,12 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
   constructor(
     private store: Store<fromApp.AppState>,
     private sortService: SelectionSortService,
-    private renderer: Renderer2, ) { }
+    private renderer: Renderer2, ) {
+    super()
+  }
 
   ngOnInit(): void {
-    this.store.select('selectionSort').subscribe(data => {
+    this.store.select('selectionSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
       this.illustrativeArr = [...data.currentArr];
       this.visualise(data.sortingHistory);
     })
@@ -34,6 +39,7 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     console.log(this.arrContainer)
     this.arrDomChildren = this.arrContainer.nativeElement.children;
+    calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[]);
   }
 
   async visualise(sortHistory: SelectionSortStep[]) {
@@ -47,16 +53,16 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
 
         // initialises them temporary step
         this.illustrativeArr = [...el.startingArr];
-        
+
         this.renderer.addClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
         await delay(500)
         // visualizes the two compared numbers
-        if(!el.didSwap){
+        if (!el.didSwap) {
           this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
           this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
         }
 
-        if(smallestIndex !== el.minValueIndex && smallestIndex !== -1){
+        if (smallestIndex !== el.minValueIndex && smallestIndex !== -1) {
           await delay(200)
           this.renderer.removeClass(this.arrDomChildren[smallestIndex], 'smallestNumber');
         }
@@ -72,7 +78,7 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
           this.renderer.removeClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
         }
 
-        
+
 
         await delay(500);
         this.illustrativeArr = [...el.resultArr];
@@ -86,7 +92,7 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
         }
 
         await delay(200);
-        if(!el.didSwap){
+        if (!el.didSwap) {
           this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
           this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
         }
@@ -111,5 +117,8 @@ export class SelectionSortComponent implements OnInit, AfterViewInit {
   async sort() {
     this.sortService.selectionSort(this.illustrativeArr);
   }
-
+  ngOnDestroy() {
+    this.store.dispatch(new fromSelectionSortActions.DeleteSelectionSortHistory());
+    super.ngOnDestroy();
+  }
 }

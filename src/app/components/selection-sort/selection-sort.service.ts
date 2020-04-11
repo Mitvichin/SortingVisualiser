@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { SelectionSortStep } from '../../models/selection-sort/SelectionSortStep';
-import { swapElements } from '../../utils/swapElements';
+import { swapElements } from '../../shared/utils/swap-elements';
 import * as fromApp from '../../store/app.reducer';
 import * as fromSelectionSortActions from './store/selection-sort.actions';
 import { ComparedCouple } from 'src/app/models/shared/ComparedCouple';

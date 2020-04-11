@@ -1,17 +1,20 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChild } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
 import { QuickSortService } from './quick-sort.service';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../store/app.reducer';
+import * as fromQuickSortActions from './store/quick-sort.actions';
 import { QuickSortStep } from 'src/app/models/quick-sort/QuickSortStep';
-import { delay } from '../../utils/delay';
-import { swapElements } from '../../utils/swapElements';
+import { delay } from '../../shared/utils/delay';
+import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
+import { BaseComponent } from 'src/app/shared/components/base/base.component';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'quick-sort',
   templateUrl: './quick-sort.component.html',
   styleUrls: ['./quick-sort.component.scss']
 })
-export class QuickSortComponent implements OnInit {
+export class QuickSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('arrContainer') arrContainer: ElementRef;
   arrDomChildren: any;
   itemSwapDistance: number = 0;
@@ -22,18 +25,20 @@ export class QuickSortComponent implements OnInit {
   constructor(
     private store: Store<fromApp.AppState>,
     private sortService: QuickSortService,
-    private renderer: Renderer2) { }
+    private renderer: Renderer2) {
+    super();
+  }
 
   ngOnInit(): void {
-    this.store.select('quickSort').subscribe(data => {
+    this.store.select('quickSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
       this.illustrativeArr = [...data.currentArr];
       this.visualise(data.sortingHistory);
     })
   }
 
   ngAfterViewInit(): void {
-    console.log(this.arrContainer)
     this.arrDomChildren = this.arrContainer.nativeElement.children;
+    calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[])
   }
 
   async visualise(sortHistory: QuickSortStep[]) {
@@ -127,5 +132,10 @@ export class QuickSortComponent implements OnInit {
 
   sort() {
     this.sortService.quickSort(this.illustrativeArr);
+  }
+
+  ngOnDestroy(): void {
+    this.store.dispatch(new fromQuickSortActions.DeleteQuickSortHistory());
+    super.ngOnDestroy();
   }
 }

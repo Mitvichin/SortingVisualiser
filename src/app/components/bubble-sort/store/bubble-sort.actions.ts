@@ -1,8 +1,10 @@
 import { Action } from '@ngrx/store';
 import { BubbleSortStep } from './../../../models/bubble-sort/BubbleSortStep';
 
-export const ADD_ARR = 'ADD_ARR';
-export const ADD_BUBBLE_SORT_HISTORY = 'ADD_BUBBLE_SORT_HISTORY';
+export const ADD_ARR = 'ADD_ARR',
+    ADD_BUBBLE_SORT_HISTORY = 'ADD_BUBBLE_SORT_HISTORY',
+    DELETE_BUBBLE_SORT_HISTORY = 'DELETE_BUBBLE_SORT_HISTORY';
+
 
 export class AddArr implements Action {
     readonly type = ADD_ARR;
@@ -16,6 +18,13 @@ export class AddBubbleSortHistory implements Action {
     constructor(public payload: BubbleSortStep[]) { }
 }
 
+export class DeleteBubbleSortHistory implements Action {
+    readonly type = DELETE_BUBBLE_SORT_HISTORY;
+
+    constructor() { }
+}
+
 export type BubbleSortActions =
     AddArr
-    | AddBubbleSortHistory;
+    | AddBubbleSortHistory
+    | DeleteBubbleSortHistory;

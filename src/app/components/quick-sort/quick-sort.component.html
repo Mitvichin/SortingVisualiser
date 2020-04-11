@@ -1,6 +1,6 @@
 <div class="row align-items-center flex-column">
-    <div class="p-4" *ngIf="illustrativeArr">
-        <div #arrContainer>
+    <div class="p-4 h-100" *ngIf="illustrativeArr">
+        <div class="h-100" #arrContainer>
             <div *ngFor="let step of illustrativeArr; let i = index;" class="default">{{step}}</div>
         </div>
     </div>

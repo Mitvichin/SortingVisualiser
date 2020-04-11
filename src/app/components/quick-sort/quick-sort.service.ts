@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { swapElements } from '../../utils/swapElements';
+import { swapElements } from '../../shared/utils/swap-elements';
 import * as fromApp from '../../store/app.reducer';
 import * as fromQuickSortActions from './store/quick-sort.actions';
 import { Store } from '@ngrx/store';
