@@ -21,6 +21,9 @@ export class QuickSortComponent extends BaseComponent implements OnInit, AfterVi
   DOMElWidth: number = 120;
   iterationSpeed: number = 1000; // in milliseconds
   illustrativeArr: number[];
+  initialArr: number[];
+  currentArr: number[];
+  shouldUseInitialArr: boolean;
 
   constructor(
     private store: Store<fromApp.AppState>,
@@ -31,8 +34,19 @@ export class QuickSortComponent extends BaseComponent implements OnInit, AfterVi
 
   ngOnInit(): void {
     this.store.select('quickSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-      this.illustrativeArr = [...data.currentArr];
       this.visualise(data.sortingHistory);
+    })
+
+    this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+      if (!this.illustrativeArr && data.shouldUseInitialArr) {
+        this.illustrativeArr = [...data.initialArr];
+      } else if (!this.illustrativeArr) {
+        this.illustrativeArr = [...data.currentArr];
+      }
+
+      this.initialArr = data.initialArr;
+      this.currentArr = data.currentArr;
+      this.shouldUseInitialArr = data.shouldUseInitialArr
     })
   }
 
@@ -131,6 +145,13 @@ export class QuickSortComponent extends BaseComponent implements OnInit, AfterVi
   }
 
   sort() {
+    if (this.shouldUseInitialArr) {
+      this.illustrativeArr = [...this.initialArr];
+    } else {
+      this.illustrativeArr = [...this.currentArr];
+    }
+
+    console.log(this.illustrativeArr)
     this.sortService.quickSort(this.illustrativeArr);
   }
 

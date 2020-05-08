@@ -18,6 +18,7 @@ export class BubbleSortService {
   }
 
   bubleSort(arr: number[], predicate: compare) {
+    arr = [...arr];
     this.sortingHistory = new Array<BubbleSortStep>();
     for (let i = 0; i < arr.length; i++) {
       for (let k = 0; k < arr.length - 1 - i; k++) {

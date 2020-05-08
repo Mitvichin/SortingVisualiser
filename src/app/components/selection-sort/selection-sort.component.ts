@@ -21,6 +21,9 @@ export class SelectionSortComponent extends BaseComponent implements OnInit, Aft
   DOMElWidth: number = 120;
   iterationSpeed: number = 1000; // in milliseconds
   illustrativeArr: number[];
+  initialArr: number[];
+  currentArr: number[];
+  shouldUseInitialArr: boolean;
 
   constructor(
     private store: Store<fromApp.AppState>,
@@ -31,8 +34,19 @@ export class SelectionSortComponent extends BaseComponent implements OnInit, Aft
 
   ngOnInit(): void {
     this.store.select('selectionSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-      this.illustrativeArr = [...data.currentArr];
       this.visualise(data.sortingHistory);
+    })
+
+    this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+      if (!this.illustrativeArr && data.shouldUseInitialArr) {
+        this.illustrativeArr = [...data.initialArr];
+      } else if (!this.illustrativeArr) {
+        this.illustrativeArr = [...data.currentArr];
+      }
+
+      this.initialArr = data.initialArr;
+      this.currentArr = data.currentArr;
+      this.shouldUseInitialArr = data.shouldUseInitialArr
     })
   }
 
@@ -115,6 +129,13 @@ export class SelectionSortComponent extends BaseComponent implements OnInit, Aft
   }
 
   async sort() {
+
+    if (this.shouldUseInitialArr) {
+      this.illustrativeArr = [...this.initialArr];
+    } else {
+      this.illustrativeArr = [...this.currentArr];
+    }
+    
     this.sortService.selectionSort(this.illustrativeArr);
   }
   ngOnDestroy() {

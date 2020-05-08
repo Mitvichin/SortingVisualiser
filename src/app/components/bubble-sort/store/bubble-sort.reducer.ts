@@ -17,12 +17,12 @@ export function bubbleSortReducer(state = initialState, action: fromBubbleSortAc
         case fromBubbleSortActions.ADD_ARR:
             return {
                 ...state,
-                array: action.payload
+                currentArray: [...action.payload]
             }
         case fromBubbleSortActions.ADD_BUBBLE_SORT_HISTORY:
             return {
                 ...state,
-                sortingHistory: action.payload
+                sortingHistory: [...action.payload]
             }
         case fromBubbleSortActions.DELETE_BUBBLE_SORT_HISTORY:
             return {

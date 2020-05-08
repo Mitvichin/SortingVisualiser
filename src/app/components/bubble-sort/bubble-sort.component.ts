@@ -4,6 +4,7 @@ import { Store } from '@ngrx/store';
 import { BubbleSortStep } from '../../models/bubble-sort/BubbleSortStep';
 import * as fromApp from '../../store/app.reducer';
 import * as fromBubbleSortActions from '../bubble-sort/store/bubble-sort.actions';
+import * as fromVisualizerActions from '../visualizer/store/visualizer.actions';
 import { delay } from '../../shared/utils/delay';
 import { ascendingSort, descendingSort } from '../../shared/utils/sorting-predicates';
 import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
@@ -18,12 +19,16 @@ import { BaseComponent } from 'src/app/shared/components/base/base.component';
 })
 export class BubbleSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('arrContainer') arrContainer: ElementRef;
+
   arrDomChildren: any;
   itemSwapDistance: number = 0;
   DOMElWidth: number = 120;
   iterationSpeed: number = 1000; // in milliseconds
   illustrativeArr: number[];
-  asd: Subscription;
+  initialArr: number[];
+  currentArr: number[];
+  shouldUseInitialArr: boolean;
+  shouldStopVisualizationExecution: boolean = false;
 
   constructor(
     private sortService: BubbleSortService,
@@ -34,9 +39,21 @@ export class BubbleSortComponent extends BaseComponent implements OnInit, AfterV
 
 
   ngOnInit(): void {
-    this.asd = this.store.select('bubbleSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-      this.illustrativeArr = [...data.currentArray];
+    this.store.select('bubbleSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+      console.log(this.illustrativeArr)
       this.visualise(data.sortingHistory);
+    })
+
+    this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+      if (!this.illustrativeArr && data.shouldUseInitialArr) {
+        this.illustrativeArr = [...data.initialArr];
+      } else if (!this.illustrativeArr) {
+        this.illustrativeArr = [...data.currentArr];
+      }
+
+      this.initialArr = data.initialArr;
+      this.currentArr = data.currentArr;
+      this.shouldUseInitialArr = data.shouldUseInitialArr
     })
   }
 
@@ -49,6 +66,7 @@ export class BubbleSortComponent extends BaseComponent implements OnInit, AfterV
     if (bubbleSortHistory.length > 0) {
       //used for of because it can be async
       for (const { i, el } of bubbleSortHistory.map((el, i) => ({ i, el }))) {
+        if (this.shouldStopVisualizationExecution) return;
         this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
         // increases the speed of the iteration
         await delay(this.iterationSpeed);
@@ -94,16 +112,28 @@ export class BubbleSortComponent extends BaseComponent implements OnInit, AfterV
             this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
           }
         }
+
+        // use the router to deter
+        if (this.shouldStopVisualizationExecution) return;
+        this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
       }
     }
   }
 
   async sort() {
+    if (this.shouldUseInitialArr) {
+      this.illustrativeArr = [...this.initialArr];
+    } else {
+      this.illustrativeArr = [...this.currentArr];
+    }
+
+    console.log(this.illustrativeArr)
     this.sortService.bubleSort(this.illustrativeArr, ascendingSort);
   }
 
   ngOnDestroy(): void {
     this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory());
+    this.shouldStopVisualizationExecution = true;
     super.ngOnDestroy();
   }
 }

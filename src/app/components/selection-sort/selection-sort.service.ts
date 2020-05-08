@@ -16,6 +16,7 @@ export class SelectionSortService {
   constructor(private store: Store<fromApp.AppState>) { }
 
   selectionSort(arr: number[]) {
+    arr = [...arr];
     this.sortingHistory = new Array<SelectionSortStep>();
     let tempComparedCouple: ComparedCouple;
     for (let i = 0; i < arr.length - 1; i++) {

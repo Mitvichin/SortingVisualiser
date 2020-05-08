@@ -17,12 +17,12 @@ export function selectionSortReducer(state: State = initialState, action: fromSe
         case fromSelectionSortActions.ADD_ARR:
             return {
                 ...state,
-                currentArr: action.payload
+                currentArr: [...action.payload]
             }
         case fromSelectionSortActions.ADD_SELECTION_SORT_HISTORY:
             return {
                 ...state,
-                sortingHistory: action.payload
+                sortingHistory: [...action.payload]
             }
         default:
             return initialState;

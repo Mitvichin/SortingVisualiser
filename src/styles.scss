@@ -5,6 +5,13 @@ html, body{
     color: white;
 }
 
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none !important;
+}
+
 .comparedCouple {
     background-color: red !important;
 }
@@ -19,15 +26,15 @@ html, body{
     color:white;
     font-size:1.2rem;
     font-weight: 500;
-    transform: translate(0, 0);
     width: 100px;
     height: 0px;
     border: 1px solid transparent;
-    border-radius: 0.3rem;
+    border-radius: .2rem;
     text-align: center;
     display: inline-block;
     margin: 0 10px;
     background-color: #827397;
+    
     &:after,
     &:before {
         content: "";

@@ -16,6 +16,7 @@ export class QuickSortService {
   constructor(private store: Store<fromApp.AppState>) { }
 
   quickSort(arr: number[]) {
+    arr = [...arr];
     this.sortingHistory = [];
     this.sort(arr, 0, arr.length - 1);
     this.store.dispatch(new fromQuickSortActions.AddQuickSortHistory(this.sortingHistory));

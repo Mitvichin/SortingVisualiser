@@ -16,12 +16,12 @@ export function quickSortReducer(state: State = initialState, action: fromQuickS
         case fromQuickSortActions.ADD_ARR:
             return {
                 ...state,
-                currentArr: action.payload
+                currentArr: [...action.payload]
             }
         case fromQuickSortActions.ADD_QUICK_SORT_HISTORY:
             return {
                 ...state,
-                sortingHistory: action.payload
+                sortingHistory: [...action.payload]
             }
         case fromQuickSortActions.DELETE_QUICK_SORT_HISTORY:
             return {
