@@ -5,12 +5,14 @@ export interface State {
     currentArr: number[];
     initialArr: number[];
     shouldUseInitialArr: boolean;
+    isVisualizing: boolean;
 }
 
 const initialState: State = {
     currentArr: [12, 3, 4, 16, 2, 100],
     initialArr: [12, 3, 4, 16, 2, 100],
     shouldUseInitialArr: true,
+    isVisualizing: false,
 }
 
 export function visualizerReducer(state: State = initialState, action: VisualizerActions) {
@@ -29,7 +31,12 @@ export function visualizerReducer(state: State = initialState, action: Visualize
         case fromVisualizerActions.CHANGE_SOURCE_ARR:
             return {
                 ...state,
-                shouldUseInitialArr: !state.shouldUseInitialArr
+                shouldUseInitialArr: action.payload
+            }
+        case fromVisualizerActions.TOGGLE_VISUALIZING:
+            return {
+                ...state,
+                isVisualizing: !state.isVisualizing
             }
         default:
             return state;

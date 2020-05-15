@@ -20,7 +20,6 @@ export class QuickSortService {
     this.sortingHistory = [];
     this.sort(arr, 0, arr.length - 1);
     this.store.dispatch(new fromQuickSortActions.AddQuickSortHistory(this.sortingHistory));
-    console.log(this.sortingHistory);
   }
 
   private sort(arr: number[], left: number, right: number) {

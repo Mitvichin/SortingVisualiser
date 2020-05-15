@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, Renderer2, ElementRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, ViewChild, Renderer2, ElementRef, ChangeDetectorRef, OnDestroy } from '@angular/core';
 import { BubbleSortComponent } from '../bubble-sort/bubble-sort.component';
 import { QuickSortComponent } from '../quick-sort/quick-sort.component';
 import { SelectionSortComponent } from '../selection-sort/selection-sort.component';
@@ -19,6 +19,9 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   private isQuickSort: boolean = false;
   private isSelectionSort: boolean = false;
   private changeSourceBtnArr: string = ""; // used in the template
+  private shouldUseInitialArr: boolean;
+  private btnImgSource: string; // used in the template
+  private isVisualizing: boolean;
   private arrSizeOptions: Object = {
     small: 6,
     medium: 12,
@@ -36,24 +39,31 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    console.log(this.arrSizeOptions)
     this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-      console.log(data.shouldUseInitialArr)
-      if (data.shouldUseInitialArr) {
+      this.shouldUseInitialArr = data.shouldUseInitialArr;
+      this.isVisualizing = data.isVisualizing;
+
+      if (this.shouldUseInitialArr) {
         this.changeSourceBtnArr = "Initial array";
       } else {
         this.changeSourceBtnArr = "Current array";
       }
+
+      if (this.isVisualizing) {
+        this.btnImgSource = "../../../assets/pause-btn.png";
+      } else {
+        this.btnImgSource = "../../../assets/play-btn.png";
+      }
     })
   }
 
-  addSizeBtnHoverClass(){
-    this.renderer.addClass(this.sizeDropdown.nativeElement,"size-btn");
+  addSizeBtnHoverClass() {
+    this.renderer.addClass(this.sizeDropdown.nativeElement, "size-btn");
   }
 
   async generateNewArr(option: number) {
 
-    this.renderer.removeClass(this.sizeDropdown.nativeElement,"size-btn");
+    this.renderer.removeClass(this.sizeDropdown.nativeElement, "size-btn");
     this.changeDetector.detectChanges();
 
     let tempArr: number[] = [];
@@ -61,11 +71,11 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       tempArr.push(Math.floor(Math.random() * 500))
     }
 
-     this.store.dispatch(new fromVisualizerActions.AddInitialArr(tempArr));
+    this.store.dispatch(new fromVisualizerActions.AddInitialArr(tempArr));
   }
 
   changeSourceArr() {
-    this.store.dispatch(new fromVisualizerActions.ChangeSourceArr())
+    this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(!this.shouldUseInitialArr))
   }
 
   activateBubbleSort() {
@@ -82,17 +92,20 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   sort() {
-    if (this.isBubbleSort) {
-      this.bubbleSortComponent.sort();
-    }
+    this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
 
-    if (this.isSelectionSort) {
-      this.selectionSortComponent.sort();
-    }
+    if (this.isVisualizing) {
+      if (this.isBubbleSort) {
+        this.bubbleSortComponent.sort();
+      }
 
-    if (this.isQuickSort) {
-      this.quickSortComponent.sort();
+      if (this.isSelectionSort) {
+        this.selectionSortComponent.sort();
+      }
+
+      if (this.isQuickSort) {
+        this.quickSortComponent.sort();
+      }
     }
   }
-
 }

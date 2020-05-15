@@ -1,13 +1,16 @@
-import { Component, OnInit, Renderer2, ElementRef, ViewChild, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Renderer2, ElementRef, ViewChild, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { QuickSortService } from './quick-sort.service';
 import { Store } from '@ngrx/store';
 import * as fromApp from '../../store/app.reducer';
 import * as fromQuickSortActions from './store/quick-sort.actions';
+import * as fromVisualizerActions from '../visualizer/store/visualizer.actions';
 import { QuickSortStep } from 'src/app/models/quick-sort/QuickSortStep';
 import { delay } from '../../shared/utils/delay';
 import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { takeUntil } from 'rxjs/operators';
+import { areArrsEqual } from 'src/app/shared/utils/are-arrs-equal';
+
 
 @Component({
   selector: 'quick-sort',
@@ -16,49 +19,65 @@ import { takeUntil } from 'rxjs/operators';
 })
 export class QuickSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('arrContainer') arrContainer: ElementRef;
-  arrDomChildren: any;
+  arrDomChildren: any = [];
   itemSwapDistance: number = 0;
-  DOMElWidth: number = 120;
+  DOMElWidth: number = 0;
+  DOMElMargin: number = 2; // px
   iterationSpeed: number = 1000; // in milliseconds
   illustrativeArr: number[];
   initialArr: number[];
   currentArr: number[];
   shouldUseInitialArr: boolean;
+  isVisualizing: boolean = false;
+  shouldStopVisualizationExecution: boolean = false;
 
   constructor(
     private store: Store<fromApp.AppState>,
     private sortService: QuickSortService,
-    private renderer: Renderer2) {
+    private renderer: Renderer2,
+    private detector: ChangeDetectorRef) {
     super();
   }
 
   ngOnInit(): void {
     this.store.select('quickSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-      this.visualise(data.sortingHistory);
+      if (data.sortingHistory.length > 0)
+        this.visualise(data.sortingHistory);
     })
 
-    this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-      if (!this.illustrativeArr && data.shouldUseInitialArr) {
-        this.illustrativeArr = [...data.initialArr];
-      } else if (!this.illustrativeArr) {
-        this.illustrativeArr = [...data.currentArr];
-      }
+    this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(async data => {
+      if (!data.isVisualizing)
+        if (data.shouldUseInitialArr) {
+          this.illustrativeArr = [...data.initialArr];
+        } else {
+          this.illustrativeArr = [...data.currentArr];
+        }
 
       this.initialArr = data.initialArr;
       this.currentArr = data.currentArr;
       this.shouldUseInitialArr = data.shouldUseInitialArr
+      this.isVisualizing = data.isVisualizing;
+
+      if (areArrsEqual(this.initialArr, this.currentArr) && !data.isVisualizing) {
+        this.detector.detectChanges();
+        calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
+      }
     })
   }
 
   ngAfterViewInit(): void {
     this.arrDomChildren = this.arrContainer.nativeElement.children;
-    calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[])
+    calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
   }
 
   async visualise(sortHistory: QuickSortStep[]) {
+    this.DOMElWidth = (this.arrDomChildren[0] as HTMLElement).getBoundingClientRect().width + this.DOMElMargin * 2;
     if (sortHistory.length > 0) {
+      this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(false));
       //used for of because it can be async
       for (const { i, el } of sortHistory.map((el, i) => ({ i, el }))) {
+        if (this.shouldStopVisualizationExecution) return;
+
         if (el.didSwap)
           this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
         // increases the speed of the iteration
@@ -140,7 +159,12 @@ export class QuickSortComponent extends BaseComponent implements OnInit, AfterVi
           }
 
         }
+
+        if (this.shouldStopVisualizationExecution) return;
+        this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
       }
+
+      this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
     }
   }
 
@@ -157,6 +181,11 @@ export class QuickSortComponent extends BaseComponent implements OnInit, AfterVi
 
   ngOnDestroy(): void {
     this.store.dispatch(new fromQuickSortActions.DeleteQuickSortHistory());
+    this.shouldStopVisualizationExecution = true;
+
+    if (this.isVisualizing) {
+      this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
+    }
     super.ngOnDestroy();
   }
 }
