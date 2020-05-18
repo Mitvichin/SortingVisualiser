@@ -1,17 +1,18 @@
-import { OnDestroy, ViewChild, ElementRef, Renderer2, Injector, ChangeDetectorRef, Component, AfterViewInit, OnInit, Type } from '@angular/core';
+import { OnDestroy, ViewChild, ElementRef, Renderer2, ChangeDetectorRef, Component, AfterViewInit, OnInit } from '@angular/core';
 import { calculateElementsHeight } from '../../utils/calculate-elements-height';
 import { BaseComponent } from './base.component';
-import { Store } from '@ngrx/store';
+import { Store, StateObservable } from '@ngrx/store';
 import * as fromApp from '../../../store/app.reducer';
-import * as fromBubbleSortActions from '../../../components/bubble-sort/store/bubble-sort.actions';
 import { takeUntil } from 'rxjs/operators';
-import { BubbleSortComponent } from 'src/app/components/bubble-sort/bubble-sort.component';
 import { areArrsEqual } from '../../utils/are-arrs-equal';
+import { SortService } from '../../interfaces/SortService';
+import { BaseSortStep } from 'src/app/models/shared/BaseSortStep';
+import { StateSelector } from '../../../store/app.reducer';
 
 @Component({
   selector: 'base-sort',
 })
-export abstract class BaseSortComponent extends BaseComponent implements OnInit,AfterViewInit, OnDestroy {
+export abstract class BaseSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('arrContainer') protected arrContainer: ElementRef;
 
   protected arrDomChildren: any = [];
@@ -31,21 +32,23 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
     protected store: Store<fromApp.AppState>,
     protected renderer: Renderer2,
     protected detector: ChangeDetectorRef,
-    private childType: any,
+    protected sortService: SortService,
+    private storeDeleteAction: any,
+    private selector: Function, // TODO: Find a way to restrict what function will be placed here
   ) {
     super();
-    console.log(childType);
 
   }
 
   ngOnInit(): void {
-    this.store.select('bubbleSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-      this.sortHistory = [...data.sortingHistory];
+    console.log(typeof StateSelector.selectBubbleSort)
+    this.store.select().pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+    this.sortHistory = [...data.sortingHistory];
       if (this.sortHistory.length > 0) {
         this.visualise([...this.sortHistory]);
       }
     })
-    
+
     this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(async storeData => {
       let data = { ...storeData };
 
@@ -66,10 +69,8 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
         this.detector.detectChanges();
         calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
         this.currentIndex = 0;
-          // TODO: Put this in separate method
-        if(this.childType === BubbleSortComponent.name){
-          this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory())
-        }
+
+        this.store.dispatch(this.storeDeleteAction)
       }
     })
   }
@@ -79,6 +80,21 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
     calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
   }
 
-  abstract visualise(sortHistory: any[]) :void
+  async sort() {
+    if (this.shouldUseInitialArr) {
+      this.illustrativeArr = [...this.initialArr];
+    } else {
+      this.illustrativeArr = [...this.currentArr];
+    }
 
+   
+    if (this.sortHistory.length > 0) {
+      this.visualise([...this.sortHistory]);
+      return;
+    }
+
+    this.sortService.sort(this.illustrativeArr);
+  }
+
+  abstract visualise(sortHistory: BaseSortStep[]): void
 }

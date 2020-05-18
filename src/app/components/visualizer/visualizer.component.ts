@@ -8,6 +8,7 @@ import * as fromApp from '../../store/app.reducer';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { delay } from '../../shared/utils/delay';
+import { ArraySizeOption } from 'src/app/shared/enums/ArraySizeOption';
 
 @Component({
   selector: 'visualizer',
@@ -22,11 +23,8 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   private shouldUseInitialArr: boolean;
   private btnImgSource: string; // used in the template
   private isVisualizing: boolean;
-  private arrSizeOptions: Object = {
-    small: 6,
-    medium: 12,
-    big: 24
-  }
+  private arrSizeOptions:typeof ArraySizeOption = ArraySizeOption; // used in the template
+
 
   @ViewChild(BubbleSortComponent) private bubbleSortComponent: BubbleSortComponent;
   @ViewChild(SelectionSortComponent) private selectionSortComponent: SelectionSortComponent;
@@ -42,7 +40,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
     this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
       this.shouldUseInitialArr = data.shouldUseInitialArr;
       this.isVisualizing = data.isVisualizing;
-
+      
       if (this.shouldUseInitialArr) {
         this.changeSourceBtnArr = "Initial array";
       } else {

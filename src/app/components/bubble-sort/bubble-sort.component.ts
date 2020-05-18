@@ -1,4 +1,4 @@
-import { Component, OnInit, Renderer2, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Renderer2, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { BubbleSortService } from './bubble-sort.service';
 import { Store } from '@ngrx/store';
 import { BubbleSortStep } from '../../models/bubble-sort/BubbleSortStep';
@@ -6,11 +6,6 @@ import * as fromApp from '../../store/app.reducer';
 import * as fromBubbleSortActions from '../bubble-sort/store/bubble-sort.actions';
 import * as fromVisualizerActions from '../visualizer/store/visualizer.actions';
 import { delay } from '../../shared/utils/delay';
-import { areArrsEqual } from '../../shared/utils/are-arrs-equal';
-import { ascendingSort, descendingSort } from '../../shared/utils/sorting-predicates';
-import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
-import { takeUntil, take } from 'rxjs/operators';
-import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
 
 @Component({
@@ -19,19 +14,17 @@ import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.comp
   styleUrls: ['./bubble-sort.component.scss'],
 })
 export class BubbleSortComponent extends BaseSortComponent implements OnInit, OnDestroy {
-  //sortHistory: BubbleSortStep[];
 
   constructor(
-    private sortService: BubbleSortService,
+    protected sortService: BubbleSortService,
     protected store: Store<fromApp.AppState>,
     protected renderer: Renderer2,
     protected detector: ChangeDetectorRef) {
-    super(store, renderer, detector, BubbleSortComponent.name);
+    super(store, renderer, detector,sortService, new fromBubbleSortActions.DeleteBubbleSortHistory());
   }
 
 
   ngOnInit(): void {
-    console.log(this.currentIndex);
     super.ngOnInit();
     // this.store.select('bubbleSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
     //   this.sortHistory = [...data.sortingHistory];
@@ -74,7 +67,6 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
 
   async visualise(sortHistory: BubbleSortStep[]) {
     this.DOMElWidth = (this.arrDomChildren[0] as HTMLElement).getBoundingClientRect().width + this.DOMElMargin * 2; // *2 because we have 2 sides with 2px margin
-
     sortHistory = sortHistory.splice(this.currentIndex, sortHistory.length); // splicing the original history incase the pause btn was pressed and we need to continue from where we paused
 
     if (sortHistory.length > 0) {
@@ -143,20 +135,20 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
     this.sortHistory = [];
   }
 
-  async sort() {
-    if (this.shouldUseInitialArr) {
-      this.illustrativeArr = [...this.initialArr];
-    } else {
-      this.illustrativeArr = [...this.currentArr];
-    }
+  // async sort() {
+  //   if (this.shouldUseInitialArr) {
+  //     this.illustrativeArr = [...this.initialArr];
+  //   } else {
+  //     this.illustrativeArr = [...this.currentArr];
+  //   }
 
-    if (this.sortHistory.length > 0) {
-      this.visualise([...this.sortHistory]);
-      return;
-    }
+  //   if (this.sortHistory.length > 0) {
+  //     this.visualise([...this.sortHistory]);
+  //     return;
+  //   }
 
-    this.sortService.bubleSort(this.illustrativeArr, ascendingSort);
-  }
+  //   this.sortService.sort(this.illustrativeArr);
+  // }
 
   ngOnDestroy(): void {
     this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory());

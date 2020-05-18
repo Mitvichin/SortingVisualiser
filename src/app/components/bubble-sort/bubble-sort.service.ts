@@ -17,7 +17,7 @@ export class BubbleSortService {
   constructor(private store: Store<fromApp.AppState>) {
   }
 
-  bubleSort(arr: number[], predicate: compare) {
+  sort(arr: number[]) {
     arr = [...arr];
     this.sortingHistory = new Array<BubbleSortStep>();
     for (let i = 0; i < arr.length; i++) {
@@ -26,7 +26,7 @@ export class BubbleSortService {
         this.sortingStep.comparedCouple = { x: arr[k], y: arr[k + 1], indexX: k, indexY: k + 1 }
         this.sortingStep.isCompleted = false;
         this.sortingStep.startingArr = [...arr];
-        if (predicate(arr[k], arr[k + 1])) {
+        if (arr[k] > arr[k + 1]) {
           swapElements(k, k + 1, arr)
           this.sortingStep.didSwap = true
         } else {
@@ -45,9 +45,3 @@ export class BubbleSortService {
     this.store.dispatch(new fromBubbleSortActions.AddBubbleSortHistory(this.sortingHistory))
   }
 }
-
-interface compare {
-  (x: number, y: number): boolean;
-}
-
-

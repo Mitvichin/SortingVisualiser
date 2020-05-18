@@ -176,7 +176,7 @@ export class QuickSortComponent extends BaseComponent implements OnInit, AfterVi
     }
 
     console.log(this.illustrativeArr)
-    this.sortService.quickSort(this.illustrativeArr);
+    this.sortService.sort(this.illustrativeArr);
   }
 
   ngOnDestroy(): void {

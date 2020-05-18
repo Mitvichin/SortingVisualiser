@@ -15,25 +15,25 @@ export class QuickSortService {
 
   constructor(private store: Store<fromApp.AppState>) { }
 
-  quickSort(arr: number[]) {
+  sort(arr: number[]) {
     arr = [...arr];
     this.sortingHistory = [];
-    this.sort(arr, 0, arr.length - 1);
+    this.quickSort(arr, 0, arr.length - 1);
     this.store.dispatch(new fromQuickSortActions.AddQuickSortHistory(this.sortingHistory));
   }
 
-  private sort(arr: number[], left: number, right: number) {
+  private quickSort(arr: number[], left: number, right: number) {
     let index;
 
     if (arr.length > 1) {
       index = this.partition(arr, left, right)
 
       if (left < index -1) {
-        this.sort(arr, left, index -2)
+        this.quickSort(arr, left, index -2)
       }
 
       if (index < right) {
-        this.sort(arr, index, right)
+        this.quickSort(arr, index, right)
       }
     }
     return arr;

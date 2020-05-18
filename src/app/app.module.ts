@@ -11,7 +11,6 @@ import * as fromApp from './store/app.reducer';
 import { SelectionSortComponent } from './components/selection-sort/selection-sort.component';
 import { QuickSortComponent } from './components/quick-sort/quick-sort.component';
 import { VisualizerComponent } from './components/visualizer/visualizer.component';
-import { BaseComponent } from './shared/components/base/base.component';
 
 @NgModule({
   declarations: [
@@ -20,7 +19,6 @@ import { BaseComponent } from './shared/components/base/base.component';
     SelectionSortComponent,
     QuickSortComponent,
     VisualizerComponent,
-    BaseComponent
   ],
   imports: [
     BrowserModule,

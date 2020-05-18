@@ -4,7 +4,7 @@ import { Subject } from 'rxjs';
 @Component({
   selector:'base-component'
 })
-export class BaseComponent implements OnDestroy {
+export abstract class BaseComponent implements OnDestroy {
   $unsubscribe: Subject<any>;
 
   constructor() {

@@ -20,13 +20,11 @@ export function bubbleSortReducer(state = initialState, action: fromBubbleSortAc
                 currentArray: [...action.payload]
             }
         case fromBubbleSortActions.ADD_BUBBLE_SORT_HISTORY:
-            console.log("FROM REDUCER")
             return {
                 ...state,
                 sortingHistory: [...action.payload]
             }
         case fromBubbleSortActions.DELETE_BUBBLE_SORT_HISTORY:
-            console.log("FROM REDUCER")
             return {
                 ...state,
                 sortingHistory: []
