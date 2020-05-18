@@ -7,7 +7,6 @@ import * as fromVisualizerActions from './store/visualizer.actions';
 import * as fromApp from '../../store/app.reducer';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
-import { delay } from '../../shared/utils/delay';
 import { ArraySizeOption } from 'src/app/shared/enums/ArraySizeOption';
 
 @Component({
@@ -19,10 +18,10 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   private isBubbleSort: boolean = true;
   private isQuickSort: boolean = false;
   private isSelectionSort: boolean = false;
-  private changeSourceBtnArr: string = ""; // used in the template
   private shouldUseInitialArr: boolean;
-  private btnImgSource: string; // used in the template
   private isVisualizing: boolean;
+  private changeSourceBtnArr: string = ""; // used in the template
+  private btnImgSource: string; // used in the template
   private arrSizeOptions:typeof ArraySizeOption = ArraySizeOption; // used in the template
 
 
@@ -37,7 +36,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+    this.store.select(fromApp.StateSelector.selectVisualizer).pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
       this.shouldUseInitialArr = data.shouldUseInitialArr;
       this.isVisualizing = data.isVisualizing;
       
@@ -57,6 +56,10 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
 
   addSizeBtnHoverClass() {
     this.renderer.addClass(this.sizeDropdown.nativeElement, "size-btn");
+  }
+
+  isAllowed(){
+    return !this.isVisualizing;
   }
 
   async generateNewArr(option: number) {
@@ -104,6 +107,12 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       if (this.isQuickSort) {
         this.quickSortComponent.sort();
       }
+    }
+  }
+
+  clickIfAllowed(callback:Function){
+    if(this.isAllowed()){
+      callback.bind(this)();
     }
   }
 }

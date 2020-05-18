@@ -20,52 +20,22 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
     protected store: Store<fromApp.AppState>,
     protected renderer: Renderer2,
     protected detector: ChangeDetectorRef) {
-    super(store, renderer, detector,sortService, new fromBubbleSortActions.DeleteBubbleSortHistory());
+    super(
+      store,
+      renderer,
+      detector,
+      sortService,
+      new fromBubbleSortActions.DeleteBubbleSortHistory(),
+      fromApp.StateSelector.selectBubbleSort);
   }
 
 
   ngOnInit(): void {
     super.ngOnInit();
-    // this.store.select('bubbleSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-    //   this.sortHistory = [...data.sortingHistory];
-    //   if (this.sortHistory.length > 0) {
-    //     this.visualise([...this.sortHistory]);
-    //   }
-
-    // })
-    
-    // this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(async storeData => {
-    //   let data = { ...storeData };
-
-    //   if (!data.isVisualizing)
-    //     if (data.shouldUseInitialArr) {
-    //       this.illustrativeArr = data.initialArr;
-    //     } else {
-    //       this.illustrativeArr = data.currentArr;
-    //     }
-
-
-    //   this.initialArr = data.initialArr;
-    //   this.currentArr = data.currentArr;
-    //   this.shouldUseInitialArr = data.shouldUseInitialArr;
-    //   this.isVisualizing = data.isVisualizing;
-
-    //   if (areArrsEqual(this.initialArr, this.currentArr) && !data.isVisualizing) {
-    //     this.detector.detectChanges();
-    //     calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
-    //     this.currentIndex = 0;
-
-    //     this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory())
-    //   }
-    // })
   }
 
-  // ngAfterViewInit() {
-  //   this.arrDomChildren = this.arrContainer.nativeElement.children;
-  //   calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
-  // }
-
   async visualise(sortHistory: BubbleSortStep[]) {
+    
     this.DOMElWidth = (this.arrDomChildren[0] as HTMLElement).getBoundingClientRect().width + this.DOMElMargin * 2; // *2 because we have 2 sides with 2px margin
     sortHistory = sortHistory.splice(this.currentIndex, sortHistory.length); // splicing the original history incase the pause btn was pressed and we need to continue from where we paused
 
@@ -123,9 +93,8 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
 
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
-        // use the router to deter
-        if (!this.isVisualizing) return;
 
+        if (!this.isVisualizing) return;
       }
 
       this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
@@ -135,27 +104,12 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
     this.sortHistory = [];
   }
 
-  // async sort() {
-  //   if (this.shouldUseInitialArr) {
-  //     this.illustrativeArr = [...this.initialArr];
-  //   } else {
-  //     this.illustrativeArr = [...this.currentArr];
+  // ngOnDestroy(): void {
+  //   this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory());
+  //   if (this.isVisualizing) {
+  //     this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
   //   }
 
-  //   if (this.sortHistory.length > 0) {
-  //     this.visualise([...this.sortHistory]);
-  //     return;
-  //   }
-
-  //   this.sortService.sort(this.illustrativeArr);
+  //   super.ngOnDestroy();
   // }
-
-  ngOnDestroy(): void {
-    this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory());
-    if (this.isVisualizing) {
-      this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
-    }
-
-    super.ngOnDestroy();
-  }
 }

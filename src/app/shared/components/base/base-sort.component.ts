@@ -1,13 +1,15 @@
 import { OnDestroy, ViewChild, ElementRef, Renderer2, ChangeDetectorRef, Component, AfterViewInit, OnInit } from '@angular/core';
 import { calculateElementsHeight } from '../../utils/calculate-elements-height';
 import { BaseComponent } from './base.component';
-import { Store, StateObservable } from '@ngrx/store';
+import { Store } from '@ngrx/store';
 import * as fromApp from '../../../store/app.reducer';
 import { takeUntil } from 'rxjs/operators';
 import { areArrsEqual } from '../../utils/are-arrs-equal';
 import { SortService } from '../../interfaces/SortService';
 import { BaseSortStep } from 'src/app/models/shared/BaseSortStep';
-import { StateSelector } from '../../../store/app.reducer';
+import { BaseState } from '../../interfaces/BaseState';
+import * as fromVisualizerActions from '../../../components/visualizer/store/visualizer.actions';
+import { deepCopy } from '../../utils/deep-copy';
 
 @Component({
   selector: 'base-sort',
@@ -19,7 +21,7 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   protected itemSwapDistance: number = 0;
   protected DOMElWidth: number = 0;
   protected DOMElMargin: number = 2; //px
-  protected iterationSpeed: number = 1000; // in milliseconds
+  protected iterationSpeed: number = 0; // in milliseconds
   protected illustrativeArr: number[];
   protected initialArr: number[];
   protected currentArr: number[];
@@ -34,23 +36,25 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
     protected detector: ChangeDetectorRef,
     protected sortService: SortService,
     private storeDeleteAction: any,
-    private selector: Function, // TODO: Find a way to restrict what function will be placed here
+    private selector: (state: fromApp.AppState) => BaseState
   ) {
     super();
-
   }
 
+  abstract visualise(sortHistory: BaseSortStep[]): void
+
   ngOnInit(): void {
-    console.log(typeof StateSelector.selectBubbleSort)
-    this.store.select().pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-    this.sortHistory = [...data.sortingHistory];
+    this.store.select(this.selector).pipe(takeUntil(this.$unsubscribe)).subscribe(storeData => {
+      let data = deepCopy(storeData);
+
+      this.sortHistory = data.sortingHistory;
       if (this.sortHistory.length > 0) {
         this.visualise([...this.sortHistory]);
       }
     })
 
-    this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(async storeData => {
-      let data = { ...storeData };
+    this.store.select(fromApp.StateSelector.selectVisualizer).pipe(takeUntil(this.$unsubscribe)).subscribe(async storeData => {
+      let data = deepCopy(storeData);
 
       if (!data.isVisualizing)
         if (data.shouldUseInitialArr) {
@@ -70,7 +74,9 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
         calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
         this.currentIndex = 0;
 
-        this.store.dispatch(this.storeDeleteAction)
+        if (this.sortHistory.length > 0) {
+          this.store.dispatch(this.storeDeleteAction)
+        }
       }
     })
   }
@@ -87,7 +93,7 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
       this.illustrativeArr = [...this.currentArr];
     }
 
-   
+
     if (this.sortHistory.length > 0) {
       this.visualise([...this.sortHistory]);
       return;
@@ -96,5 +102,14 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
     this.sortService.sort(this.illustrativeArr);
   }
 
-  abstract visualise(sortHistory: BaseSortStep[]): void
+  ngOnDestroy(): void {
+    if (this.sortHistory.length > 0) {
+      this.store.dispatch(this.storeDeleteAction);
+    }
+
+    if (this.isVisualizing) {
+      this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
+    }
+    super.ngOnDestroy();
+  }
 }

@@ -1,21 +1,21 @@
 <div class="visualizer d-flex flex-column">
     <div class="navigation d-flex flex-row">
         <div class="col-3 btn-container justify-content-start py-4 px-0">
-            <div class="btn btn-sm">Options</div>
+            <div class="btn btn-sm " [ngClass]="{'allowed': isAllowed()}">Options</div>
         </div>
         <div class="col-9 btn-container justify-content-end py-4 px-0">
-            <div id="source-arr-btn" class="btn btn-sm mx-2"  (click)="changeSourceArr();">{{changeSourceBtnArr}}</div>
-            <div class="btn btn-sm mx-2 size-btn" (mouseenter)="addSizeBtnHoverClass()" #sizeDropdown >Generate new array
+            <div id="source-arr-btn" class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}"  (click)="clickIfAllowed(changeSourceArr)">{{changeSourceBtnArr}}</div>
+            <div class="btn btn-sm mx-2 size-btn" [ngClass]="{'allowed': isAllowed()}" (mouseenter)="addSizeBtnHoverClass()" #sizeDropdown >Generate new array
                 <div class="size-dropdown">
                     <div class="size-option" (click)="generateNewArr(arrSizeOptions.small)">Small</div>
                     <div class="size-option" (click)="generateNewArr(arrSizeOptions.medium)">Medium</div>
                     <div class="size-option" (click)="generateNewArr(arrSizeOptions.big)">Big</div>
                 </div>
             </div>
-            <div class="btn btn-sm  mx-2" (click)="activateBubbleSort()">Bubble sort</div>
-            <div class="btn btn-sm  mx-2" (click)="activateSelectionSort()">Selection sort</div>
-            <div class="btn btn-sm  mx-2" (click)="activateQuickSort()">Quick sort</div>
-            <div class="btn btn-sm  ml-2 d-flex justify-content-center align-items-center" (click)="sort()"><img
+            <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateBubbleSort)">Bubble sort</div>
+            <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateSelectionSort)">Selection sort</div>
+            <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateQuickSort)">Quick sort</div>
+            <div class="btn btn-sm ml-2 d-flex justify-content-center align-items-center allowed" (click)="sort()"><img
                     class="play-img" [src]="btnImgSource" alt="Sort"></div>
         </div>
     </div>

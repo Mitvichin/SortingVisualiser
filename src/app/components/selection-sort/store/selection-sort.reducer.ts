@@ -1,7 +1,8 @@
 import { SelectionSortStep } from '../../../models/selection-sort/SelectionSortStep';
 import * as fromSelectionSortActions from './selection-sort.actions';
+import { BaseState } from 'src/app/shared/interfaces/BaseState';
 
-export interface State {
+export interface State extends BaseState {
     currentArr: number[];
     sortingHistory: SelectionSortStep[];
 }

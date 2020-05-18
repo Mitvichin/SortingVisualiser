@@ -17,64 +17,30 @@ import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.comp
   templateUrl: './selection-sort.component.html',
   styleUrls: ['./selection-sort.component.scss']
 })
-export class SelectionSortComponent extends BaseSortComponent implements OnInit, AfterViewInit, OnDestroy {
-  // @ViewChild('arrContainer') arrContainer: ElementRef;
-  // arrDomChildren: any = [];
-  // itemSwapDistance: number = 0;
-  // DOMElWidth: number = 0;
-  // DOMElMargin: number = 2; //px
-  // iterationSpeed: number = 1000; // in milliseconds
-  // illustrativeArr: number[];
-  // initialArr: number[];
-  // currentArr: number[];
-  // shouldUseInitialArr: boolean;
-  // isVisualizing: boolean;
-  // shouldStopVisualizationExecution: boolean = false;
+export class SelectionSortComponent extends BaseSortComponent implements OnInit, OnDestroy {
 
   constructor(
     protected store: Store<fromApp.AppState>,
     protected sortService: SelectionSortService,
     protected renderer: Renderer2,
     protected detector: ChangeDetectorRef) {
-    super(store, renderer, detector, sortService, new fromSelectionSortActions.DeleteSelectionSortHistory())
+    super(
+      store,
+      renderer,
+      detector,
+      sortService,
+      new fromSelectionSortActions.DeleteSelectionSortHistory(),
+      fromApp.StateSelector.selectSelectionSort)
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    // this.store.select('selectionSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-    //   if (data.sortingHistory.length > 0)
-    //     this.visualise(data.sortingHistory);
-    // })
-
-    // this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(async data => {
-    //   if (!data.isVisualizing)
-    //     if (data.shouldUseInitialArr) {
-    //       this.illustrativeArr = [...data.initialArr];
-    //     } else {
-    //       this.illustrativeArr = [...data.currentArr];
-    //     }
-
-    //   this.initialArr = data.initialArr;
-    //   this.currentArr = data.currentArr;
-    //   this.shouldUseInitialArr = data.shouldUseInitialArr
-    //   this.isVisualizing = data.isVisualizing;
-
-    //   if (areArrsEqual(this.initialArr, this.currentArr) && !data.isVisualizing) {
-    //     this.detector.detectChanges();
-    //     calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
-    //   }
-    // })
   }
-
-  // ngAfterViewInit(): void {
-  //   console.log(this.arrContainer)
-  //   this.arrDomChildren = this.arrContainer.nativeElement.children;
-  //   calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin);
-  // }
 
   async visualise(sortHistory: SelectionSortStep[]) {
     this.DOMElWidth = (this.arrDomChildren[0] as HTMLElement).getBoundingClientRect().width + this.DOMElMargin * 2; // *2 because we have 2 sides with 2px margin
-    this.sortHistory = sortHistory.splice(this.currentIndex, sortHistory.length); // splicing the original history incase the pause btn was pressed and we need to continue from where we paused
+    sortHistory = sortHistory.splice(this.currentIndex, sortHistory.length); // splicing the original history incase the pause btn was pressed and we need to continue from where we paused
+    
     if (sortHistory.length > 0) {
       this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(false));
       let smallestIndex = -1;
@@ -112,8 +78,6 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
           await delay(300)
           this.renderer.removeClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
         }
-
-
 
         await delay(500);
         this.illustrativeArr = [...el.resultArr];
@@ -158,23 +122,12 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
     this.sortHistory = [];
   }
 
-  // async sort() {
+  // ngOnDestroy() {
+  //   this.store.dispatch(new fromSelectionSortActions.DeleteSelectionSortHistory());
 
-  //   if (this.shouldUseInitialArr) {
-  //     this.illustrativeArr = [...this.initialArr];
-  //   } else {
-  //     this.illustrativeArr = [...this.currentArr];
+  //   if (this.isVisualizing) {
+  //     this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
   //   }
-
-  //   this.sortService.sort(this.illustrativeArr);
+  //   super.ngOnDestroy();
   // }
-
-  ngOnDestroy() {
-    this.store.dispatch(new fromSelectionSortActions.DeleteSelectionSortHistory());
-
-    if (this.isVisualizing) {
-      this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
-    }
-    super.ngOnDestroy();
-  }
 }

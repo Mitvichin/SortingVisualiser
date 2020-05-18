@@ -1,7 +1,8 @@
 import * as fromBubbleSortActions from './bubble-sort.actions';
 import { BubbleSortStep } from '../../../models/bubble-sort/BubbleSortStep';
+import { BaseState } from 'src/app/shared/interfaces/BaseState';
 
-export interface State {
+export interface State extends BaseState{
     currentArray: number[];
     sortingHistory: BubbleSortStep[],
 }
