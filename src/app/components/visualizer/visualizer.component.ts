@@ -22,7 +22,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   private isVisualizing: boolean;
   private changeSourceBtnArr: string = ""; // used in the template
   private btnImgSource: string; // used in the template
-  private arrSizeOptions:typeof ArraySizeOption = ArraySizeOption; // used in the template
+  private arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
 
 
   @ViewChild(BubbleSortComponent) private bubbleSortComponent: BubbleSortComponent;
@@ -39,7 +39,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
     this.store.select(fromApp.StateSelector.selectVisualizer).pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
       this.shouldUseInitialArr = data.shouldUseInitialArr;
       this.isVisualizing = data.isVisualizing;
-      
+
       if (this.shouldUseInitialArr) {
         this.changeSourceBtnArr = "Initial array";
       } else {
@@ -58,7 +58,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
     this.renderer.addClass(this.sizeDropdown.nativeElement, "size-btn");
   }
 
-  isAllowed(){
+  isAllowed() {
     return !this.isVisualizing;
   }
 
@@ -76,6 +76,14 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   changeSourceArr() {
+    if (this.isBubbleSort) {
+      this.bubbleSortComponent.reset();
+    } else if (this.isQuickSort) {
+      this.quickSortComponent.reset();
+    } else {
+      this.selectionSortComponent.reset();
+    }
+
     this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(!this.shouldUseInitialArr))
   }
 
@@ -110,8 +118,8 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
     }
   }
 
-  clickIfAllowed(callback:Function){
-    if(this.isAllowed()){
+  clickIfAllowed(callback: Function) {
+    if (this.isAllowed()) {
       callback.bind(this)();
     }
   }
