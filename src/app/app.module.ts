@@ -11,6 +11,8 @@ import * as fromApp from './store/app.reducer';
 import { SelectionSortComponent } from './components/selection-sort/selection-sort.component';
 import { QuickSortComponent } from './components/quick-sort/quick-sort.component';
 import { VisualizerComponent } from './components/visualizer/visualizer.component';
+import { EffectsModule } from '@ngrx/effects'
+import { BaseSortEffects } from './shared/base-effects/base-sort.effects';
 
 @NgModule({
   declarations: [
@@ -25,6 +27,7 @@ import { VisualizerComponent } from './components/visualizer/visualizer.componen
     AppRoutingModule,
     FormsModule,
     StoreModule.forRoot(fromApp.appReducer),
+    EffectsModule.forRoot([BaseSortEffects]),
     StoreDevtoolsModule.instrument({ logOnly: environment.production })
   ],
   providers: [],

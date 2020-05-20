@@ -7,6 +7,7 @@ import * as fromBubbleSortActions from '../bubble-sort/store/bubble-sort.actions
 import * as fromVisualizerActions from '../visualizer/store/visualizer.actions';
 import { delay } from '../../shared/utils/delay';
 import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
+import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
 
 @Component({
   selector: 'bubble-sort',
@@ -19,12 +20,14 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
     protected sortService: BubbleSortService,
     protected store: Store<fromApp.AppState>,
     protected renderer: Renderer2,
-    protected detector: ChangeDetectorRef) {
+    protected detector: ChangeDetectorRef,
+    protected baseEffects: BaseSortEffects) {
     super(
       store,
       renderer,
       detector,
       sortService,
+      baseEffects,
       new fromBubbleSortActions.DeleteBubbleSortHistory(),
       fromApp.StateSelector.selectBubbleSort);
   }
@@ -94,7 +97,9 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
 
-        if (!this.isVisualizing) return;
+        if (!this.isVisualizing){
+          await delay(50); return;
+        } 
       }
 
       this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
@@ -102,14 +107,6 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
     // this will happen only if you dont stop the visualization by force
     this.currentIndex = 0;
     this.sortHistory = [];
+    this.isCompleted = true;
   }
-
-  // ngOnDestroy(): void {
-  //   this.store.dispatch(new fromBubbleSortActions.DeleteBubbleSortHistory());
-  //   if (this.isVisualizing) {
-  //     this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
-  //   }
-
-  //   super.ngOnDestroy();
-  // }
 }

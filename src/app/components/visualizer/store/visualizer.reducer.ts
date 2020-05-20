@@ -6,6 +6,7 @@ export interface State {
     initialArr: number[];
     shouldUseInitialArr: boolean;
     isVisualizing: boolean;
+    shouldDeleteHistory: boolean;
 }
 
 const initialState: State = {
@@ -13,6 +14,7 @@ const initialState: State = {
     initialArr: [12, 3, 4, 16, 2, 100],
     shouldUseInitialArr: true,
     isVisualizing: false,
+    shouldDeleteHistory: false
 }
 
 export function visualizerReducer(state: State = initialState, action: VisualizerActions) {
@@ -22,11 +24,12 @@ export function visualizerReducer(state: State = initialState, action: Visualize
                 ...state,
                 currentArr: [...action.payload]
             }
-        case fromVisualizerActions.ADD_INITIAL_ARR:
+        case fromVisualizerActions.GENERATE_RANDOM_ARR:
         return {
                 ...state,
                 currentArr: [...action.payload],
                 initialArr: [...action.payload],
+                shouldDeleteHistory: true
             }
         case fromVisualizerActions.CHANGE_SOURCE_ARR:
             return {
@@ -36,7 +39,8 @@ export function visualizerReducer(state: State = initialState, action: Visualize
         case fromVisualizerActions.TOGGLE_VISUALIZING:
             return {
                 ...state,
-                isVisualizing: !state.isVisualizing
+                isVisualizing: !state.isVisualizing,
+                shouldDeleteHistory: false
             }
         default:
             return state;

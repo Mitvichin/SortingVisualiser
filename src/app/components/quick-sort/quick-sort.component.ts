@@ -6,10 +6,8 @@ import * as fromQuickSortActions from './store/quick-sort.actions';
 import * as fromVisualizerActions from '../visualizer/store/visualizer.actions';
 import { QuickSortStep } from 'src/app/models/quick-sort/QuickSortStep';
 import { delay } from '../../shared/utils/delay';
-import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
-import { takeUntil } from 'rxjs/operators';
-import { areArrsEqual } from 'src/app/shared/utils/are-arrs-equal';
 import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
+import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
 
 
 @Component({
@@ -18,70 +16,32 @@ import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.comp
   styleUrls: ['./quick-sort.component.scss']
 })
 export class QuickSortComponent extends BaseSortComponent implements OnInit, AfterViewInit, OnDestroy {
-  // @ViewChild('arrContainer') arrContainer: ElementRef;
-  // arrDomChildren: any = [];
-  // itemSwapDistance: number = 0;
-  // DOMElWidth: number = 0;
-  // DOMElMargin: number = 2; // px
-  // iterationSpeed: number = 1000; // in milliseconds
-  // illustrativeArr: number[];
-  // initialArr: number[];
-  // currentArr: number[];
-  // shouldUseInitialArr: boolean;
-  // isVisualizing: boolean = false;
-  // shouldStopVisualizationExecution: boolean = false;
 
   constructor(
     protected store: Store<fromApp.AppState>,
     protected sortService: QuickSortService,
     protected renderer: Renderer2,
-    protected detector: ChangeDetectorRef) {
+    protected detector: ChangeDetectorRef,
+    protected baseEffects: BaseSortEffects) {
     super(
       store,
       renderer,
       detector,
       sortService,
+      baseEffects,
       new fromQuickSortActions.DeleteQuickSortHistory(),
-      fromApp.StateSelector.selectQuickSort
+      fromApp.StateSelector.selectQuickSort,
     );
   }
 
   ngOnInit(): void {
     super.ngOnInit();
-    // this.store.select('quickSort').pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
-    //   if (data.sortingHistory.length > 0)
-    //     this.visualise(data.sortingHistory);
-    // })
-
-    // this.store.select('visualizer').pipe(takeUntil(this.$unsubscribe)).subscribe(async data => {
-    //   if (!data.isVisualizing)
-    //     if (data.shouldUseInitialArr) {
-    //       this.illustrativeArr = [...data.initialArr];
-    //     } else {
-    //       this.illustrativeArr = [...data.currentArr];
-    //     }
-
-    //   this.initialArr = data.initialArr;
-    //   this.currentArr = data.currentArr;
-    //   this.shouldUseInitialArr = data.shouldUseInitialArr
-    //   this.isVisualizing = data.isVisualizing;
-
-    //   if (areArrsEqual(this.initialArr, this.currentArr) && !data.isVisualizing) {
-    //     this.detector.detectChanges();
-    //     calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
-    //   }
-    // })
   }
-
-  // ngAfterViewInit(): void {
-  //   this.arrDomChildren = this.arrContainer.nativeElement.children;
-  //   calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
-  // }
 
   async visualise(sortHistory: QuickSortStep[]) {
     this.DOMElWidth = (this.arrDomChildren[0] as HTMLElement).getBoundingClientRect().width + this.DOMElMargin * 2; // *2 because we have 2 sides with 2px margin
     sortHistory = sortHistory.splice(this.currentIndex, sortHistory.length); // splicing the original history incase the pause btn was pressed and we need to continue from where we paused
-    
+
     if (sortHistory.length > 0) {
       this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(false));
       //used for of because it can be async
@@ -170,7 +130,9 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
 
-        if (!this.isVisualizing) return;
+        if (!this.isVisualizing){
+          await delay(50); return;
+        } 
       }
 
       this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
@@ -179,14 +141,6 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
     // this will happen only if you dont stop the visualization by force
     this.currentIndex = 0;
     this.sortHistory = [];
+    this.isCompleted = true;
   }
-
-  // ngOnDestroy(): void {
-  //   this.store.dispatch(new fromQuickSortActions.DeleteQuickSortHistory());
-
-  //   if (this.isVisualizing) {
-  //     this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
-  //   }
-  //   super.ngOnDestroy();
-  // }
 }

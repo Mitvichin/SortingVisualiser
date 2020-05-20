@@ -26,4 +26,4 @@ export class DeleteQuickSortHistory implements Action {
 export type QuickSortActions =
     AddArr
     | AddQuickSortHistory
-    |DeleteQuickSortHistory;
+    | DeleteQuickSortHistory;

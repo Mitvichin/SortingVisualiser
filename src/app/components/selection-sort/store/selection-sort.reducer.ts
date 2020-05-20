@@ -25,7 +25,12 @@ export function selectionSortReducer(state: State = initialState, action: fromSe
                 ...state,
                 sortingHistory: [...action.payload]
             }
+        case fromSelectionSortActions.DELETE_SELECTION_SORT_HISTORY:
+            return {
+                ...state,
+                sortingHistory: []
+            }
         default:
-            return initialState;
+            return state;
     }
 }

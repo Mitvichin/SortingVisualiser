@@ -1,6 +1,5 @@
 import { Action } from '@ngrx/store';
 import { SelectionSortStep } from '../../../models/selection-sort/SelectionSortStep';
-import { DeleteQuickSortHistory } from '../../quick-sort/store/quick-sort.actions';
 
 export const ADD_ARR = 'ADD_ARR',
     ADD_SELECTION_SORT_HISTORY = 'ADD_SELECTION_SORT_HISTORY',
@@ -28,5 +27,5 @@ export class DeleteSelectionSortHistory implements Action {
 export type SelectionSortActions =
     AddArr
     | AddSelectionSortHistory
-    | DeleteQuickSortHistory;
+    | DeleteSelectionSortHistory;
     

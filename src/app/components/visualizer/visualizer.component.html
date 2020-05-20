@@ -15,7 +15,7 @@
             <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateBubbleSort)">Bubble sort</div>
             <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateSelectionSort)">Selection sort</div>
             <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateQuickSort)">Quick sort</div>
-            <div class="btn btn-sm ml-2 d-flex justify-content-center align-items-center allowed" (click)="sort()"><img
+            <div class="btn btn-sm ml-2 d-flex justify-content-center align-items-center" [ngClass]="{'allowed': enablePlayBtn}" (click)="clickIfEnable(sort)"><img
                     class="play-img" [src]="btnImgSource" alt="Sort"></div>
         </div>
     </div>

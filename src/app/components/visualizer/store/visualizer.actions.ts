@@ -1,9 +1,10 @@
 import { Action } from '@ngrx/store';
+import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
 
 export const ADD_CURRENT_ARR = "ADD_CURRENT_ARR",
-    ADD_INITIAL_ARR = "ADD_INITIAL_ARR",
+    GENERATE_RANDOM_ARR = "GENERATE_RANDOM_ARR",
     CHANGE_SOURCE_ARR = "CHANGE_SOURCE_ARR",
-    TOGGLE_VISUALIZING = "START_VISUALIZING";
+    TOGGLE_VISUALIZING = "TOGGLE_VISUALIZING";
 
 export class AddCurrentArr implements Action {
     readonly type = ADD_CURRENT_ARR;
@@ -11,8 +12,8 @@ export class AddCurrentArr implements Action {
     constructor(public payload: number[]) { }
 }
 
-export class AddInitialArr implements Action {
-    readonly type = ADD_INITIAL_ARR;
+export class GenerateRandomArr implements Action {
+    readonly type = GENERATE_RANDOM_ARR;
 
     constructor(public payload: number[]) { }
 }
@@ -31,6 +32,6 @@ export class ToggleVisualizing implements Action {
 
 export type VisualizerActions =
     AddCurrentArr
-    | AddInitialArr
+    | GenerateRandomArr
     | ChangeSourceArr
     | ToggleVisualizing;

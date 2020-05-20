@@ -1,4 +1,4 @@
-import { OnDestroy, ViewChild, ElementRef, Renderer2, ChangeDetectorRef, Component, AfterViewInit, OnInit } from '@angular/core';
+import { OnDestroy, ViewChild, ElementRef, Renderer2, ChangeDetectorRef, Component, AfterViewInit, OnInit, ViewContainerRef } from '@angular/core';
 import { calculateElementsHeight } from '../../utils/calculate-elements-height';
 import { BaseComponent } from './base.component';
 import { Store } from '@ngrx/store';
@@ -10,12 +10,16 @@ import { BaseSortStep } from 'src/app/models/shared/BaseSortStep';
 import { BaseState } from '../../interfaces/BaseState';
 import * as fromVisualizerActions from '../../../components/visualizer/store/visualizer.actions';
 import { deepCopy } from '../../utils/deep-copy';
+import { delay } from '../../utils/delay';
+import { Actions, ofType } from '@ngrx/effects'
+import { BaseSortEffects } from '../../base-effects/base-sort.effects';
 
 @Component({
   selector: 'base-sort',
 })
 export abstract class BaseSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
   @ViewChild('arrContainer') protected arrContainer: ElementRef;
+  @ViewChild('arrContainer', { read: ViewContainerRef }) protected arrContainerReff: ViewContainerRef;
 
   protected arrDomChildren: any = [];
   protected itemSwapDistance: number = 0;
@@ -29,12 +33,15 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   protected isVisualizing: boolean = false;
   protected currentIndex: number = 0;
   protected sortHistory: any[];
+  protected resetIllustrativeArr: boolean = false;
+  protected isCompleted: boolean = false;
 
   constructor(
     protected store: Store<fromApp.AppState>,
     protected renderer: Renderer2,
     protected detector: ChangeDetectorRef,
     protected sortService: SortService,
+    protected baseEffects: BaseSortEffects,
     private storeDeleteAction: any,
     private selector: (state: fromApp.AppState) => BaseState
   ) {
@@ -48,36 +55,36 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
       let data = deepCopy(storeData);
 
       this.sortHistory = data.sortingHistory;
+      console.log(storeData.sortingHistory === data.sortingHistory)
       if (this.sortHistory.length > 0) {
         this.visualise([...this.sortHistory]);
       }
     })
 
     this.store.select(fromApp.StateSelector.selectVisualizer).pipe(takeUntil(this.$unsubscribe)).subscribe(async storeData => {
-      let data = deepCopy(storeData);
+      let data: typeof storeData = deepCopy(storeData);
 
-      if (!data.isVisualizing)
+      if (!data.isVisualizing) {
         if (data.shouldUseInitialArr) {
           this.illustrativeArr = data.initialArr;
         } else {
           this.illustrativeArr = data.currentArr;
         }
-
+      }
 
       this.initialArr = data.initialArr;
       this.currentArr = data.currentArr;
       this.shouldUseInitialArr = data.shouldUseInitialArr;
       this.isVisualizing = data.isVisualizing;
+    })
 
-      if (areArrsEqual(this.initialArr, this.currentArr) && !data.isVisualizing) {
-        this.detector.detectChanges();
-        calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
-        this.currentIndex = 0;
+    this.baseEffects.$deleteSortHistory.pipe(
+      takeUntil(this.$unsubscribe)).subscribe(() => {
+      this.detector.detectChanges();
+      calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
+      this.currentIndex = 0;
 
-        if (this.sortHistory.length > 0) {
-          this.store.dispatch(this.storeDeleteAction)
-        }
-      }
+      this.store.dispatch(this.storeDeleteAction)
     })
   }
 
@@ -93,13 +100,31 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
       this.illustrativeArr = [...this.currentArr];
     }
 
-
+    console.log(this.sortHistory)
     if (this.sortHistory.length > 0) {
       this.visualise([...this.sortHistory]);
       return;
     }
 
     this.sortService.sort(this.illustrativeArr);
+    if (this.isCompleted) {
+      this.reset();
+    }
+  }
+
+  async reset() {
+    this.currentIndex = 0;
+    this.isCompleted = false;
+    if (this.sortHistory.length > 0) {
+      this.store.dispatch(this.storeDeleteAction);
+    }
+
+    let temp = [...this.illustrativeArr];
+    this.illustrativeArr = [];
+    this.detector.detectChanges();
+    this.illustrativeArr = temp;
+    await delay(50);
+    calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
   }
 
   ngOnDestroy(): void {

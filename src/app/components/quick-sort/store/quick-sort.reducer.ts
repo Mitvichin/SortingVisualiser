@@ -30,6 +30,6 @@ export function quickSortReducer(state: State = initialState, action: fromQuickS
                 sortingHistory: []
             }
         default:
-            return initialState;
+            return state;
     }
 }

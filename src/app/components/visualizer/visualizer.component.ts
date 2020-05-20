@@ -8,6 +8,7 @@ import * as fromApp from '../../store/app.reducer';
 import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { ArraySizeOption } from 'src/app/shared/enums/ArraySizeOption';
+import { delay } from 'src/app/shared/utils/delay';
 
 @Component({
   selector: 'visualizer',
@@ -15,15 +16,15 @@ import { ArraySizeOption } from 'src/app/shared/enums/ArraySizeOption';
   styleUrls: ['./visualizer.component.scss']
 })
 export class VisualizerComponent extends BaseComponent implements OnInit {
-  private isBubbleSort: boolean = true;
+  private isBubbleSort: boolean = false;
   private isQuickSort: boolean = false;
-  private isSelectionSort: boolean = false;
+  private isSelectionSort: boolean = true;
   private shouldUseInitialArr: boolean;
   private isVisualizing: boolean;
   private changeSourceBtnArr: string = ""; // used in the template
   private btnImgSource: string; // used in the template
   private arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
-
+  private enablePlayBtn:boolean = true;
 
   @ViewChild(BubbleSortComponent) private bubbleSortComponent: BubbleSortComponent;
   @ViewChild(SelectionSortComponent) private selectionSortComponent: SelectionSortComponent;
@@ -72,16 +73,16 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       tempArr.push(Math.floor(Math.random() * 500))
     }
 
-    this.store.dispatch(new fromVisualizerActions.AddInitialArr(tempArr));
+    this.store.dispatch(new fromVisualizerActions.GenerateRandomArr(tempArr));
   }
 
-  changeSourceArr() {
+  async changeSourceArr() {
     if (this.isBubbleSort) {
-      this.bubbleSortComponent.reset();
+      await this.bubbleSortComponent.reset();
     } else if (this.isQuickSort) {
-      this.quickSortComponent.reset();
+      await this.quickSortComponent.reset();
     } else {
-      this.selectionSortComponent.reset();
+      await this.selectionSortComponent.reset();
     }
 
     this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(!this.shouldUseInitialArr))
@@ -100,7 +101,8 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
     this.isBubbleSort = this.isSelectionSort = false;
   }
 
-  sort() {
+  async sort() {
+    this.enablePlayBtn = !this.enablePlayBtn;
     this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
 
     if (this.isVisualizing) {
@@ -116,10 +118,19 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
         this.quickSortComponent.sort();
       }
     }
+
+    await delay(500);
+    this.enablePlayBtn = !this.enablePlayBtn;
   }
 
   clickIfAllowed(callback: Function) {
     if (this.isAllowed()) {
+      callback.bind(this)();
+    }
+  }
+
+  clickIfEnable(callback: Function) {
+    if (this.enablePlayBtn) {
       callback.bind(this)();
     }
   }

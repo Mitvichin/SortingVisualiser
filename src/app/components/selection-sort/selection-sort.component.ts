@@ -6,11 +6,8 @@ import { delay } from 'src/app/shared/utils/delay';
 import * as fromApp from './../../store/app.reducer';
 import * as fromSelectionSortActions from './store/selection-sort.actions';
 import * as fromVisualizerActions from '../visualizer/store/visualizer.actions';
-import { calculateElementsHeight } from '../../shared/utils/calculate-elements-height';
-import { BaseComponent } from 'src/app/shared/components/base/base.component';
-import { takeUntil } from 'rxjs/operators';
-import { areArrsEqual } from 'src/app/shared/utils/are-arrs-equal';
 import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
+import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
 
 @Component({
   selector: 'selection-sort',
@@ -23,12 +20,14 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
     protected store: Store<fromApp.AppState>,
     protected sortService: SelectionSortService,
     protected renderer: Renderer2,
-    protected detector: ChangeDetectorRef) {
+    protected detector: ChangeDetectorRef,
+    protected baseEffects: BaseSortEffects) {
     super(
       store,
       renderer,
       detector,
       sortService,
+      baseEffects,
       new fromSelectionSortActions.DeleteSelectionSortHistory(),
       fromApp.StateSelector.selectSelectionSort)
   }
@@ -112,7 +111,9 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
 
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
-        if (!this.isVisualizing) return;
+        if (!this.isVisualizing){
+          await delay(50); return;
+        } 
       }
 
       this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
@@ -120,14 +121,6 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
     // this will happen only if you dont stop the visualization by force
     this.currentIndex = 0;
     this.sortHistory = [];
+    this.isCompleted = true;
   }
-
-  // ngOnDestroy() {
-  //   this.store.dispatch(new fromSelectionSortActions.DeleteSelectionSortHistory());
-
-  //   if (this.isVisualizing) {
-  //     this.store.dispatch(new fromVisualizerActions.ToggleVisualizing())
-  //   }
-  //   super.ngOnDestroy();
-  // }
 }
