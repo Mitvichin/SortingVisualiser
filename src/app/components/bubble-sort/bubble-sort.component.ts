@@ -38,7 +38,6 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
   }
 
   async visualise(sortHistory: BubbleSortStep[]) {
-    
     this.DOMElWidth = (this.arrDomChildren[0] as HTMLElement).getBoundingClientRect().width + this.DOMElMargin * 2; // *2 because we have 2 sides with 2px margin
     sortHistory = sortHistory.splice(this.currentIndex, sortHistory.length); // splicing the original history incase the pause btn was pressed and we need to continue from where we paused
 
@@ -46,7 +45,6 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
       this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(false));
       //used for of because it can be async
       for (const { el, i } of sortHistory.map((el, i) => ({ el, i }))) {
-        if (!this.isVisualizing) return;
 
         this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
         // increases the speed of the iteration
@@ -97,16 +95,20 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
 
-        if (!this.isVisualizing){
-          await delay(50); return;
+        if (this.shouldPause){
+          this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
+          this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
+          return;
         } 
       }
-
-      this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
+      
+      this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
+      this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
     }
     // this will happen only if you dont stop the visualization by force
     this.currentIndex = 0;
     this.sortHistory = [];
     this.isCompleted = true;
+    this.sortCompleted.emit();
   }
 }

@@ -21,7 +21,7 @@
     </div>
     <div class="content">
         <ng-container *ngIf="isBubbleSort">
-            <bubble-sort class="d-flex justify-content-center h-100"></bubble-sort>
+            <bubble-sort (sortCompleted)="onSortCompleted()" class="d-flex justify-content-center h-100"></bubble-sort>
         </ng-container>
         <ng-container *ngIf="isSelectionSort">
             <selection-sort class="d-flex justify-content-center h-100"></selection-sort>

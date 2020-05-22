@@ -9,6 +9,7 @@ import { takeUntil } from 'rxjs/operators';
 import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { ArraySizeOption } from 'src/app/shared/enums/ArraySizeOption';
 import { delay } from 'src/app/shared/utils/delay';
+import { deepCopy } from 'src/app/shared/utils/deep-copy';
 
 @Component({
   selector: 'visualizer',
@@ -16,15 +17,17 @@ import { delay } from 'src/app/shared/utils/delay';
   styleUrls: ['./visualizer.component.scss']
 })
 export class VisualizerComponent extends BaseComponent implements OnInit {
-  private isBubbleSort: boolean = false;
+  private isBubbleSort: boolean = true;
   private isQuickSort: boolean = false;
-  private isSelectionSort: boolean = true;
+  private isSelectionSort: boolean = false;
   private shouldUseInitialArr: boolean;
   private isVisualizing: boolean;
   private changeSourceBtnArr: string = ""; // used in the template
-  private btnImgSource: string; // used in the template
+  private btnImgSource: string ="../../../assets/play-btn.png" // used in the template
   private arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
-  private enablePlayBtn:boolean = true;
+  private enablePlayBtn: boolean = true;
+  private shouldStart: boolean;
+  private shouldPause: boolean;
 
   @ViewChild(BubbleSortComponent) private bubbleSortComponent: BubbleSortComponent;
   @ViewChild(SelectionSortComponent) private selectionSortComponent: SelectionSortComponent;
@@ -32,27 +35,29 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   @ViewChild('sizeDropdown') private sizeDropdown: ElementRef;
 
   constructor(private store: Store<fromApp.AppState>, private renderer: Renderer2,
-    private changeDetector: ChangeDetectorRef) {
+    private detector: ChangeDetectorRef) {
     super();
   }
 
   ngOnInit(): void {
-    this.store.select(fromApp.StateSelector.selectVisualizer).pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+    this.store.select(fromApp.StateSelector.selectVisualizer).pipe(takeUntil(this.$unsubscribe)).subscribe(storeData => {
+      let data: typeof storeData = deepCopy(storeData);
+
       this.shouldUseInitialArr = data.shouldUseInitialArr;
       this.isVisualizing = data.isVisualizing;
+      this.shouldPause = data.shouldPause;
+      this.shouldStart = data.shouldStart;
 
       if (this.shouldUseInitialArr) {
         this.changeSourceBtnArr = "Initial array";
       } else {
         this.changeSourceBtnArr = "Current array";
       }
-
-      if (this.isVisualizing) {
-        this.btnImgSource = "../../../assets/pause-btn.png";
-      } else {
-        this.btnImgSource = "../../../assets/play-btn.png";
-      }
     })
+  }
+
+  onSortCompleted(){
+    this.btnImgSource = "../../../assets/play-btn.png";
   }
 
   addSizeBtnHoverClass() {
@@ -60,13 +65,13 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   isAllowed() {
-    return !this.isVisualizing;
+    return this.shouldStart;
   }
 
   async generateNewArr(option: number) {
 
     this.renderer.removeClass(this.sizeDropdown.nativeElement, "size-btn");
-    this.changeDetector.detectChanges();
+    this.detector.detectChanges();
 
     let tempArr: number[] = [];
     for (let i = 0; i < option; i++) {
@@ -102,10 +107,10 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   async sort() {
-    this.enablePlayBtn = !this.enablePlayBtn;
-    this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
 
-    if (this.isVisualizing) {
+    if (this.shouldStart) {
+      this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(false));
+      this.btnImgSource = "../../../assets/pause-btn.png";
       if (this.isBubbleSort) {
         this.bubbleSortComponent.sort();
       }
@@ -117,10 +122,10 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       if (this.isQuickSort) {
         this.quickSortComponent.sort();
       }
+    }else{
+      this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(true));
+      this.btnImgSource = "../../../assets/play-btn.png";
     }
-
-    await delay(500);
-    this.enablePlayBtn = !this.enablePlayBtn;
   }
 
   clickIfAllowed(callback: Function) {

@@ -46,7 +46,6 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
       this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(false));
       //used for of because it can be async
       for (const { i, el } of sortHistory.map((el, i) => ({ i, el }))) {
-        if (!this.isVisualizing) return;
 
         if (el.didSwap)
           this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
@@ -130,17 +129,21 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
 
-        if (!this.isVisualizing){
-          await delay(50); return;
+        if (this.shouldPause){
+          this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
+          this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
+          return;
         } 
       }
 
-      this.store.dispatch(new fromVisualizerActions.ToggleVisualizing());
+      this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
+      this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
     }
 
     // this will happen only if you dont stop the visualization by force
     this.currentIndex = 0;
     this.sortHistory = [];
     this.isCompleted = true;
+    this.sortCompleted.emit();
   }
 }
