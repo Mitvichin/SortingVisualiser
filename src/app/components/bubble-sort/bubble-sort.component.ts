@@ -43,7 +43,7 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
 
     if (sortHistory.length > 0) {
       this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(false));
-      //used for of because it can be async
+      //used "for of" because it can be async
       for (const { el, i } of sortHistory.map((el, i) => ({ el, i }))) {
 
         this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
