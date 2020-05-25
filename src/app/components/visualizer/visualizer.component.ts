@@ -122,7 +122,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       if (this.isQuickSort) {
         this.quickSortComponent.sort();
       }
-    }else{
+    }else if(!this.shouldPause){
       this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(true));
       this.btnImgSource = "../../../assets/play-btn.png";
     }
