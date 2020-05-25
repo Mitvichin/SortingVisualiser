@@ -13,6 +13,7 @@ import { QuickSortComponent } from './components/quick-sort/quick-sort.component
 import { VisualizerComponent } from './components/visualizer/visualizer.component';
 import { EffectsModule } from '@ngrx/effects'
 import { BaseSortEffects } from './shared/base-effects/base-sort.effects';
+import { ModalComponent } from './shared/components/modal/modal.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +22,7 @@ import { BaseSortEffects } from './shared/base-effects/base-sort.effects';
     SelectionSortComponent,
     QuickSortComponent,
     VisualizerComponent,
+    ModalComponent,
   ],
   imports: [
     BrowserModule,

@@ -10,6 +10,7 @@ import { BaseComponent } from 'src/app/shared/components/base/base.component';
 import { ArraySizeOption } from 'src/app/shared/enums/ArraySizeOption';
 import { delay } from 'src/app/shared/utils/delay';
 import { deepCopy } from 'src/app/shared/utils/deep-copy';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 
 @Component({
   selector: 'visualizer',
@@ -32,6 +33,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   @ViewChild(BubbleSortComponent) private bubbleSortComponent: BubbleSortComponent;
   @ViewChild(SelectionSortComponent) private selectionSortComponent: SelectionSortComponent;
   @ViewChild(QuickSortComponent) private quickSortComponent: QuickSortComponent;
+  @ViewChild(ModalComponent) private modalComponent: ModalComponent;
   @ViewChild('sizeDropdown') private sizeDropdown: ElementRef;
 
   constructor(private store: Store<fromApp.AppState>, private renderer: Renderer2,
@@ -126,6 +128,10 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(true));
       this.btnImgSource = "../../../assets/play-btn.png";
     }
+  }
+
+  openOptions(){
+    this.modalComponent.open();
   }
 
   clickIfAllowed(callback: Function) {

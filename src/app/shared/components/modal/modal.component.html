@@ -1,0 +1,12 @@
+<div class="container-wrapper">
+    <div class="container-content" #content>
+        <div class="title">{{title}}</div>
+        <div class="content">
+            <ng-content></ng-content>
+        </div>
+        <div class="footer" (click)="close()">
+            <div class="btn btn-sm ">Close</div>
+        </div>
+    </div>
+
+</div>

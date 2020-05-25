@@ -1,7 +1,8 @@
 <div class="visualizer d-flex flex-column">
+    <app-modal title="Options"><div>TEST</div></app-modal>
     <div class="navigation d-flex flex-row">
         <div class="col-3 btn-container justify-content-start py-4 px-0">
-            <div class="btn btn-sm " [ngClass]="{'allowed': isAllowed()}">Options</div>
+            <div class="btn btn-sm " [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(openOptions)">Options</div>
         </div>
         <div class="col-9 btn-container justify-content-end py-4 px-0">
             <div id="source-arr-btn" class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}"  (click)="clickIfAllowed(changeSourceArr)">{{changeSourceBtnArr}}</div>
