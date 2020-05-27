@@ -1,0 +1,94 @@
+$borderColor: #ced4da;
+$controlPadding: 0.25rem 0.5rem;
+$controlBorderRadius: 0.2rem;
+
+.options-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
+.option {
+    font-weight: 500;
+    color: white;
+    margin: 0.5rem;
+}
+
+.option.green {
+    background-color: green;
+}
+
+.option.red {
+    background-color: red;
+}
+
+.option.yellow {
+    background-color: yellow;
+}
+
+.my-select {
+    position: relative;
+    border: 1px solid $borderColor;
+    border-radius: $controlBorderRadius;
+    padding: $controlPadding;
+    width: 100%;
+
+    .img {
+        background-image: url("../../../assets/arrow-down.svg");
+        background-size: cover;
+        width: 10px;
+        height: 10px;
+        transition: transform .3s ease-in-out;
+    }
+
+    &:focus {
+        outline: none;
+        .options-container {
+            display: block;
+        }
+
+        .img {
+            transform: rotate(540deg);
+        }
+    }
+
+    &:after {
+        content: "";
+        width: 100%;
+        height: 2rem;
+        background-color: transparent;
+        position: absolute;
+        bottom: -0.5rem;
+        left: 0;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.options-container {
+    position: absolute;
+    padding: $controlPadding;
+    border: 1px solid $borderColor;
+    border-radius: $controlBorderRadius;
+    display: none;
+    top: 2.3rem;
+    background-color: white;
+    width: inherit;
+    left: 0;
+}
+
+.my-option {
+    transition: 0.4s ease-in-out;
+    background-color: inherit;
+    border: 1px solid transparent;
+    border-radius: $controlBorderRadius;
+    padding: $controlPadding;
+    font-weight: 500;
+
+    &:hover {
+        background-color: #827397;
+        cursor: pointer;
+        color: white;
+    }
+}

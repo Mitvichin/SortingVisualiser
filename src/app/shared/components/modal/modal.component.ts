@@ -39,10 +39,13 @@ export class ModalComponent implements OnInit {
   async close() {
     this.renderer.setStyle(this.hostRef.nativeElement, 'opacity', '0')
     this.renderer.setStyle(this.content.nativeElement, 'opacity', '0')
-    this.renderer.setStyle(this.hostRef.nativeElement, 'border-radius', '50%')
+
+    this.renderer.setStyle(this.hostRef.nativeElement, 'border-radius', '100%')
     this.renderer.setStyle(this.content.nativeElement,'border-radius', '50%' )
+
     this.renderer.setStyle(this.hostRef.nativeElement, 'width', '0')
     this.renderer.setStyle(this.content.nativeElement,'width', '0' )
+
     this.renderer.setStyle(this.hostRef.nativeElement, 'height', '0')
     this.renderer.setStyle(this.content.nativeElement,'height', '0' )
 

@@ -14,6 +14,7 @@ import { VisualizerComponent } from './components/visualizer/visualizer.componen
 import { EffectsModule } from '@ngrx/effects'
 import { BaseSortEffects } from './shared/base-effects/base-sort.effects';
 import { ModalComponent } from './shared/components/modal/modal.component';
+import { OptionsComponent } from './components/options/options.component';
 
 @NgModule({
   declarations: [
@@ -23,6 +24,7 @@ import { ModalComponent } from './shared/components/modal/modal.component';
     QuickSortComponent,
     VisualizerComponent,
     ModalComponent,
+    OptionsComponent,
   ],
   imports: [
     BrowserModule,
