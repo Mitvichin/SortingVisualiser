@@ -1,5 +1,5 @@
-<div class="container-wrapper">
-    <div class="container-content" #content>
+<div class="container-wrapper" (click)="close()">
+    <div class="container-content" (click)="stopPropagation($event)" #content>
         <div class="title">{{title}}</div>
         <div class="content">
             <ng-content></ng-content>
