@@ -7,7 +7,7 @@ import { delay } from '../../utils/delay';
   styleUrls: ['./modal.component.scss']
 })
 export class ModalComponent implements OnInit {
-  @Input() title:string = "You have forgot to pass a tittle!  "
+  @Input() header:string = "You have forgot to pass a header!  "
 
   @ViewChild('content') content: ElementRef;
 

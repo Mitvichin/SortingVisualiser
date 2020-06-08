@@ -39,6 +39,7 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   protected shouldStart: boolean;
   protected shouldPause: boolean;
   private count: number = -1;
+  
   constructor(
     protected store: Store<fromApp.AppState>,
     protected renderer: Renderer2,
