@@ -1,0 +1,9 @@
+<div class="my-select" tabindex="-1" (mouseleave)="hideDropdown(options)" #options>
+    <div class="selected-option d-flex align-items-center">{{selectedValue}} <div class="img ml-auto"></div></div>
+    
+    <div class="options-container" >
+        <div *ngFor="let option of selectOptions">
+            <div class="my-option" (click)="selectColor(option.value)">{{option.displayValue}}</div>
+        </div>
+    </div>
+</div>

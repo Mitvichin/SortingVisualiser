@@ -9,20 +9,12 @@ import { delay } from 'src/app/shared/utils/delay';
 export class OptionsComponent implements OnInit {
 @ViewChild('options') options: ElementRef;
 
-  selectedValue:string = "Placeholder"
+
 
   constructor(private renderer: Renderer2, private detector: ChangeDetectorRef) { }
 
   ngOnInit(): void {
   }
 
-  private selectColor(value:string){
-    this.selectedValue = value;
-    this.hideDropdown(this.options.nativeElement)
-  }
-
-  private async hideDropdown(el:any){
-    this.renderer.removeAttribute(el,'tabindex')
-    this.renderer.setAttribute(el,'tabindex', '-1')
-  }
+ 
 }

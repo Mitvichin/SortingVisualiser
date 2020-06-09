@@ -15,6 +15,7 @@ import { EffectsModule } from '@ngrx/effects'
 import { BaseSortEffects } from './shared/base-effects/base-sort.effects';
 import { ModalComponent } from './shared/components/modal/modal.component';
 import { OptionsComponent } from './components/options/options.component';
+import { CustomSelectComponent } from './shared/components/custom-select/custom-select.component';
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { OptionsComponent } from './components/options/options.component';
     VisualizerComponent,
     ModalComponent,
     OptionsComponent,
+    CustomSelectComponent,
   ],
   imports: [
     BrowserModule,
