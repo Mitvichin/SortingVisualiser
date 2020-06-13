@@ -12,7 +12,7 @@ const initialState: State = {
     sortingHistory: [] = new Array<BubbleSortStep>(),
 }
 
-export function bubbleSortReducer(state = initialState, action: fromBubbleSortActions.BubbleSortActions) {
+export function bubbleSortReducer(state:State = initialState, action: fromBubbleSortActions.BubbleSortActions) {
     
     switch (action.type) {
         case fromBubbleSortActions.ADD_ARR:
@@ -32,10 +32,5 @@ export function bubbleSortReducer(state = initialState, action: fromBubbleSortAc
             }
         default:
             return state;
-
-
-
     }
-
-
 }

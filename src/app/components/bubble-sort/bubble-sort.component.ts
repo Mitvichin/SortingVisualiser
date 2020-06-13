@@ -5,9 +5,11 @@ import { BubbleSortStep } from '../../models/bubble-sort/BubbleSortStep';
 import * as fromApp from '../../store/app.reducer';
 import * as fromBubbleSortActions from '../bubble-sort/store/bubble-sort.actions';
 import * as fromVisualizerActions from '../visualizer/store/visualizer.actions';
+
 import { delay } from '../../shared/utils/delay';
 import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
 import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'bubble-sort',
@@ -15,6 +17,8 @@ import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
   styleUrls: ['./bubble-sort.component.scss'],
 })
 export class BubbleSortComponent extends BaseSortComponent implements OnInit, OnDestroy {
+
+  private smallerNumberColorClass;
 
   constructor(
     protected sortService: BubbleSortService,
@@ -35,6 +39,10 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
 
   ngOnInit(): void {
     super.ngOnInit();
+
+    this.store.select(fromApp.StateSelector.selectOptions).pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+      this.smallerNumberColorClass = data.smallerNumberColor;
+    })
   }
 
   async visualise(sortHistory: BubbleSortStep[]) {
@@ -51,17 +59,19 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
         await delay(this.iterationSpeed);
         this.illustrativeArr = [...el.startingArr];
 
-        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
-        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
+        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
 
         await delay(500);
         if (el.didSwap) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'itemToSwap');
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.smallerNumberColorClass);
           await delay(500)
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
         } else {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'itemToSwap');
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.smallerNumberColorClass);
         }
 
         await delay(500);
@@ -75,10 +85,10 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
         }
 
         await delay(200);
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'itemToSwap');
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'itemToSwap');
+        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
+        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.smallerNumberColorClass);
+        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.smallerNumberColorClass);
 
         if (el.didSwap) {
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '.5s ease-in-out');
@@ -86,22 +96,22 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
         }
 
         if (el.isCompleted) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'completed');
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.completedNumberColorClass);
           if (i === sortHistory.length - 1) {
-            this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
+            this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.completedNumberColorClass);
           }
         }
 
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
 
-        if (this.shouldPause){
+        if (this.shouldPause) {
           this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
           this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
           return;
-        } 
+        }
       }
-      
+
       this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
       this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
     }

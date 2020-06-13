@@ -1,5 +1,7 @@
-import { Component, OnInit, Input, Renderer2, ChangeDetectorRef, ViewChild, ElementRef } from '@angular/core';
+import { Component, OnInit, Input, Renderer2, ChangeDetectorRef, ViewChild, ElementRef, Output } from '@angular/core';
 import { Option } from '../../interfaces/Option';
+import { throwError } from 'rxjs';
+import { EventEmitter } from '@angular/core';
 
 @Component({
   selector: 'custom-select',
@@ -8,27 +10,34 @@ import { Option } from '../../interfaces/Option';
 })
 export class CustomSelectComponent implements OnInit {
 
-  @Input() selectOptions: Option[] = [];
-  @ViewChild('options') options: ElementRef;
-  selectedValue:string = "Placeholder"
+  @Input() options: Option[] = [];
+  @Input() label: string;
+  @Output() onChanged: EventEmitter<Option> = new EventEmitter();
 
-  constructor(private renderer: Renderer2, private detector: ChangeDetectorRef) { }
+  @ViewChild('select') select: ElementRef;
+  selectedOption: Option = {displayValue: 'Provide options', value:'Provide options', isSelected:true};
+
+  constructor(private renderer: Renderer2) { }
 
   ngOnInit(): void {
-    this.selectOptions.push({displayValue: "test", value: "iliq"})
-    this.selectOptions.push({displayValue: "test2", value: "iliq2"})
-    this.selectOptions.push({displayValue: "test3", value: "iliq3"})
-    this.selectOptions.push({displayValue: "test4", value: "iliq4"})
+    if (this.options.length <= 0) {
+      throw Error("Options are not provided for the custom select!");
+    } else {
+      let defautValue = this.options.find((x)=> x.isSelected);
+      this.selectedOption = defautValue ? defautValue : this.options[0]
+    }
+
   }
 
-  private selectColor(value:string){
-    this.selectedValue = value;
-    this.hideDropdown(this.options.nativeElement)
+  private selectColor(value: Option) {
+    this.selectedOption = value;
+    this.onChanged.emit(value);
+    this.hideDropdown(this.select.nativeElement)
   }
 
-  private async hideDropdown(el:any){
-    this.renderer.removeAttribute(el,'tabindex')
-    this.renderer.setAttribute(el,'tabindex', '-1')
+  private async hideDropdown(el: any) {
+    this.renderer.removeAttribute(el, 'tabindex')
+    this.renderer.setAttribute(el, 'tabindex', '-1')
   }
 
 }

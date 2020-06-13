@@ -22,7 +22,6 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   private isQuickSort: boolean = false;
   private isSelectionSort: boolean = false;
   private shouldUseInitialArr: boolean;
-  private isVisualizing: boolean;
   private changeSourceBtnArr: string = ""; // used in the template
   private btnImgSource: string ="../../../assets/play-btn.png" // used in the template
   private arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
@@ -46,7 +45,6 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       let data: typeof storeData = deepCopy(storeData);
 
       this.shouldUseInitialArr = data.shouldUseInitialArr;
-      this.isVisualizing = data.isVisualizing;
       this.shouldPause = data.shouldPause;
       this.shouldStart = data.shouldStart;
 

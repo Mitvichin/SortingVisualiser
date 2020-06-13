@@ -1,13 +1,11 @@
 <div class="options-wrapper d-flex justify-content-center">
-    <form class="col-8">
-        <div class="form-group">
-          <label for="asd">Compaired pair</label>
-          <select id="asd" class="form-control form-control-sm">
-            <option class="option red">Red</option>
-            <option class="option green">Green select</option>
-            <option class="option yellow">Yellow select</option>
-          </select>
-        </div>
-        <custom-select></custom-select>
-      </form>
+  <div class="col-8">
+    <div class="font-weight-bold">General</div>
+    <custom-select [options]="completedNumberColors" label="Completed number" (onChanged)="changeCompletedNumberColor($event)"></custom-select>
+    <custom-select [options]="compairedPairColors" label="Compared pair" (onChanged)="changeCompairedPairColor($event)"></custom-select>
+    <div class="font-weight-bold mt-3">Bubble sort</div>
+    <custom-select [options]="smallerNumberColors" label="Smaller number" (onChanged)="changeSmallerNumberColor($event)"></custom-select>
+    <div class="font-weight-bold mt-3">Quick sort</div>
+    <custom-select [options]="itemsToBeSwapedColors" label="Items to be swaped"></custom-select>
+  </div>
 </div>

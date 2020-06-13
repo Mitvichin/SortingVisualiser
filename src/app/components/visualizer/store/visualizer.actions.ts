@@ -4,7 +4,6 @@ import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.comp
 export const ADD_CURRENT_ARR = 'ADD_CURRENT_ARR',
     GENERATE_RANDOM_ARR = 'GENERATE_RANDOM_ARR',
     CHANGE_SOURCE_ARR = 'CHANGE_SOURCE_ARR',
-    TOGGLE_VISUALIZING = 'TOGGLE_VISUALIZING',
     SHOUD_PAUSE_VISUALIZATION = 'SHOUD_PAUSE_VISUALIZATION',
     SHOUD_START_VISUALIZATION = 'SHOUD_START_VISUALIZATION';
 
@@ -26,12 +25,6 @@ export class ChangeSourceArr implements Action {
     constructor(public payload: boolean) { }
 }
 
-export class ToggleVisualizing implements Action {
-    readonly type = TOGGLE_VISUALIZING;
-
-    constructor() { }
-}
-
 export class ShouldPauseVisualization implements Action {
     readonly type = SHOUD_PAUSE_VISUALIZATION;
 
@@ -48,6 +41,5 @@ export type VisualizerActions =
     AddCurrentArr
     | GenerateRandomArr
     | ChangeSourceArr
-    | ToggleVisualizing
     | ShouldPauseVisualization
     | ShouldStartVisualization;

@@ -57,8 +57,8 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
         await delay(500)
         // visualizes the two compared numbers
         if (!el.didSwap) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
         }
 
         if (smallestIndex !== el.minValueIndex && smallestIndex !== -1) {
@@ -90,8 +90,8 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
 
         await delay(200);
         if (!el.didSwap) {
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
         }
 
         if (el.didSwap) {
@@ -100,11 +100,11 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
         }
 
         if (el.isCompleted) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.completedNumberColorClass);
           this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'smallestNumber');
           if (i === sortHistory.length - 1) {
-            this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'completed');
-            this.renderer.addClass(this.arrDomChildren[el.resultArr.length - 1], 'completed');
+            this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.completedNumberColorClass);
+            this.renderer.addClass(this.arrDomChildren[el.resultArr.length - 1], this.completedNumberColorClass);
           }
         }
 

@@ -1,17 +1,19 @@
 .swapIndex:after {
    content: "";
    position: absolute;
-   height: 4px;
-   width: 100%;
-   bottom: -4px;
+   height: .5rem;
+   width: 101%;
+   bottom: -.7rem;
    background-color: #0099ff !important;
+   border-radius: .25rem;
 }
 
 .smallestNumber:before {
    content: "";
    position: absolute;
-   height: 4px;
-   width: 100%;
-   top: -4px;
+   height: .5rem;
+   width: 101%;
+   top: -.7rem;
    background-color: #99cc00 !important;
+   border-radius: .25rem;
 }

@@ -31,14 +31,15 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   protected initialArr: number[];
   protected currentArr: number[];
   protected shouldUseInitialArr: boolean;
-  protected isVisualizing: boolean = false;
   protected currentIndex: number = 0;
   protected sortHistory: any[];
   protected resetIllustrativeArr: boolean = false;
   protected isCompleted: boolean = false;
   protected shouldStart: boolean;
   protected shouldPause: boolean;
-  private count: number = -1;
+
+  protected comparedPairColorClass:string;
+  protected completedNumberColorClass:string;
   
   constructor(
     protected store: Store<fromApp.AppState>,
@@ -55,6 +56,11 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   abstract visualise(sortHistory: BaseSortStep[]): void
 
   ngOnInit(): void {
+    this.store.select(fromApp.StateSelector.selectOptions).subscribe(data => {
+      this.comparedPairColorClass = data.comparedPairColor;
+      this.completedNumberColorClass = data.completedNumberColor;
+    })
+
     this.store.select(this.selector).pipe(takeUntil(this.$unsubscribe)).subscribe(storeData => {
       let data = deepCopy(storeData);
 
@@ -78,7 +84,6 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
       this.initialArr = data.initialArr;
       this.currentArr = data.currentArr;
       this.shouldUseInitialArr = data.shouldUseInitialArr;
-      this.isVisualizing = data.isVisualizing;
       this.shouldPause = data.shouldPause;
       this.shouldStart = data.shouldStart;
     })

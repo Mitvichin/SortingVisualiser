@@ -28,8 +28,8 @@ export class QuickSortService {
     if (arr.length > 1) {
       index = this.partition(arr, left, right)
 
-      if (left < index -1) {
-        this.quickSort(arr, left, index -2)
+      if (left < index - 1) {
+        this.quickSort(arr, left, index - 1)
       }
 
       if (index < right) {
@@ -47,7 +47,7 @@ export class QuickSortService {
       j = right,
       tempComparedCouple: ComparedCouple;
 
-    while (i < j) {
+    while (i <= j) {
       pivotIndex = arr.indexOf(pivot);
       // reverse the operators below to change from ascending to descending order
       do {
@@ -84,13 +84,22 @@ export class QuickSortService {
           this.sortingStep = new QuickSortStep(pivotIndex, pivot, i, j, tempComparedCouple, true, [...arr], undefined, false);
           swapElements(i, j, arr)
           this.sortingStep.resultArr = [...arr]
+
           this.sortingHistory.push(this.sortingStep);
+        }
+
+        if (i === j) {
+          tempComparedCouple = { x: arr[i], y: arr[j], indexX: i, indexY: j };
+          this.sortingStep = new QuickSortStep(pivotIndex, pivot, i, j, tempComparedCouple, true, [...arr], undefined, false);
+          this.sortingStep.resultArr = [...arr]
+          this.sortingStep.isCompleted = true;
+          this.sortingHistory.push(this.sortingStep);
+          // this.sortingHistory[this.sortingHistory.length - 1].isCompleted = true;
         }
         i++;
         j--;
       }
     }
-    this.sortingHistory[this.sortingHistory.length - 1].isCompleted = true;
     return i;
   }
 }

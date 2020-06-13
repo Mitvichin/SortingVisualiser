@@ -8,6 +8,7 @@ import { QuickSortStep } from 'src/app/models/quick-sort/QuickSortStep';
 import { delay } from '../../shared/utils/delay';
 import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
 import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
+import { takeUntil } from 'rxjs/operators';
 
 
 @Component({
@@ -16,6 +17,8 @@ import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
   styleUrls: ['./quick-sort.component.scss']
 })
 export class QuickSortComponent extends BaseSortComponent implements OnInit, AfterViewInit, OnDestroy {
+
+  private itemsToBeSwapedColorClass:string;
 
   constructor(
     protected store: Store<fromApp.AppState>,
@@ -36,6 +39,10 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
 
   ngOnInit(): void {
     super.ngOnInit();
+
+    this.store.select(fromApp.StateSelector.selectOptions).pipe(takeUntil(this.$unsubscribe)).subscribe(data => {
+      this.itemsToBeSwapedColorClass = data.itemsToBeSwapedColor;
+    })
   }
 
   async visualise(sortHistory: QuickSortStep[]) {
@@ -56,23 +63,23 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
         this.illustrativeArr = [...el.startingArr];
 
         // visualizes the pivot index in the array
-        await delay(500)
+        await delay(250)
         this.renderer.addClass(this.arrDomChildren[el.pivotIndex], 'pivot');
 
         // visualizes the two compared numbers
-        await delay(500)
+        await delay(250)
         if (el.comparedCouple && el.didSwap === false) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
         }
 
         if (el.leftValueIndex !== undefined) {
-          await delay(500)
-          this.renderer.addClass(this.arrDomChildren[el.leftValueIndex], 'itemToSwap')
+          await delay(250)
+          this.renderer.addClass(this.arrDomChildren[el.leftValueIndex], this.itemsToBeSwapedColorClass)
 
           if (el.rightValueIndex !== undefined) {
-            this.renderer.addClass(this.arrDomChildren[el.rightValueIndex], 'itemToSwap')
-            await delay(500);
+            this.renderer.addClass(this.arrDomChildren[el.rightValueIndex], this.itemsToBeSwapedColorClass)
+            await delay(250);
           }
         }
 
@@ -82,15 +89,15 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
           this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
 
           if (el.leftValueIndex !== undefined) {
-            await delay(500);
-            this.renderer.removeClass(this.arrDomChildren[el.leftValueIndex], 'itemToSwap');
+            await delay(250);
+            this.renderer.removeClass(this.arrDomChildren[el.leftValueIndex], this.itemsToBeSwapedColorClass);
 
             if (el.rightValueIndex !== undefined)
-              this.renderer.removeClass(this.arrDomChildren[el.rightValueIndex], 'itemToSwap');
+              this.renderer.removeClass(this.arrDomChildren[el.rightValueIndex], this.itemsToBeSwapedColorClass);
           }
         }
 
-        await delay(500);
+        await delay(250);
         this.illustrativeArr = [...el.resultArr];
 
         if (el.didSwap) {
@@ -101,10 +108,10 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
           delay(200);
         }
 
-        await delay(500);
+        await delay(250);
         if (el.comparedCouple && el.didSwap == false) {
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'comparedCouple');
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], 'comparedCouple');
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
         }
 
         if (el.didSwap) {
@@ -114,15 +121,15 @@ export class QuickSortComponent extends BaseSortComponent implements OnInit, Aft
 
         if (el.isCompleted) {
           let pivotIndex = el.resultArr.indexOf(el.pivotValue);
-          this.renderer.addClass(this.arrDomChildren[pivotIndex], 'completed');
+          this.renderer.addClass(this.arrDomChildren[pivotIndex], this.completedNumberColorClass);
           this.renderer.removeClass(this.arrDomChildren[pivotIndex], 'pivot');
 
           if (el.leftValueIndex !== undefined) {
-            await delay(500);
-            this.renderer.removeClass(this.arrDomChildren[el.leftValueIndex], 'itemToSwap');
+            await delay(250);
+            this.renderer.removeClass(this.arrDomChildren[el.leftValueIndex], this.itemsToBeSwapedColorClass);
 
             if (el.rightValueIndex !== undefined)
-              this.renderer.removeClass(this.arrDomChildren[el.rightValueIndex], 'itemToSwap');
+              this.renderer.removeClass(this.arrDomChildren[el.rightValueIndex], this.itemsToBeSwapedColorClass);
           }
         }
 
