@@ -1,0 +1,21 @@
+@import "../../shared/styles/constant-colors.scss";
+
+.pivot:after {
+    content: "";
+    position: absolute;
+    height: 0.5rem;
+    width: 101%;
+    bottom: -0.7rem;
+    background-color: $pivotColor;
+    border-radius: 0.25rem;
+}
+
+.endOfSmallerNumbersIndex:after {
+    content: "";
+    position: absolute;
+    height: 0.5rem;
+    width: 101%;
+    bottom: -0.7rem;
+    background-color: $endOfSmallerNumbersIndexColor;
+    border-radius: 0.25rem;
+}

@@ -1,0 +1,37 @@
+<div class="visualizer d-flex flex-column">
+    <app-modal header="Options" #optionsModal><app-options></app-options></app-modal>
+    <app-modal header="INFO" #infoModal><info></info></app-modal>
+    <div class="navigation d-flex flex-row">
+        <div class="col-3 btn-container justify-content-start py-4 px-0">
+            <div class="btn btn-sm " [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(openOptions)">Options</div>
+            <div class="btn btn-sm ml-2 allowed"  (click)="openInfo()">INFO</div>
+        </div>
+        
+        <div class="col-9 btn-container justify-content-end py-4 px-0">
+            <div id="source-arr-btn" class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}"  (click)="clickIfAllowed(changeSourceArr)">{{changeSourceBtnArr}}</div>
+            <div class="btn btn-sm mx-2 size-btn" [ngClass]="{'allowed': isAllowed()}" (mouseenter)="addSizeBtnHoverClass()" #sizeDropdown >Generate new array
+                <div class="size-dropdown">
+                    <div class="size-option" (click)="generateNewArr(arrSizeOptions.small)">Small</div>
+                    <div class="size-option" (click)="generateNewArr(arrSizeOptions.medium)">Medium</div>
+                    <div class="size-option" (click)="generateNewArr(arrSizeOptions.big)">Big</div>
+                </div>
+            </div>
+            <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateBubbleSort)">Bubble sort</div>
+            <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateSelectionSort)">Selection sort</div>
+            <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateQuickSort)">Quick sort</div>
+            <div class="btn btn-sm ml-2 d-flex justify-content-center align-items-center" [ngClass]="{'allowed': enablePlayBtn}" (click)="clickIfEnable(sort)"><img
+                    class="play-img" [src]="btnImgSource" alt="Sort"></div>
+        </div>
+    </div>
+    <div class="content">
+        <ng-container *ngIf="isBubbleSort">
+            <bubble-sort (sortCompleted)="onSortCompleted()" class="d-flex justify-content-center h-100"></bubble-sort>
+        </ng-container>
+        <ng-container *ngIf="isSelectionSort">
+            <selection-sort (sortCompleted)="onSortCompleted()" class="d-flex justify-content-center h-100"></selection-sort>
+        </ng-container>
+        <ng-container *ngIf="isQuickSort">
+            <quick-sort (sortCompleted)="onSortCompleted()" class="d-flex justify-content-center h-100"></quick-sort>
+        </ng-container>
+    </div>
+</div>

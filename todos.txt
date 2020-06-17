@@ -1,0 +1,3 @@
+change the selectors with memoized selectors - https://ngrx.io/guide/store/selectors , https://medium.com/@stodge/ngrx-common-gotchas-8f59f541e47c
+
+

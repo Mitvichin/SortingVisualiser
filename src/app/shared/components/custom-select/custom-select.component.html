@@ -1,0 +1,9 @@
+<div *ngIf="label" class="label">{{label}} :</div>
+<div class="my-select" tabindex="-1" (mouseleave)="hideDropdown(select)" #select>
+    <div class="selected-option d-flex align-items-center">{{selectedOption.displayValue}} <div class="img ml-auto"></div></div>
+    <div class="options-container" >
+        <div *ngFor="let option of options">
+            <div class="my-option" (click)="selectColor(option)">{{option.displayValue}} <span *ngIf="option.isSelected" class="check"></span></div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,103 @@
+@import "../../styles/variables.scss";
+
+.label {
+    padding-left: .25rem;
+    font-size: .9rem;
+    margin-bottom: .2rem;
+}
+
+.check:after{
+    content: "\2713";
+    float: right;
+}
+.my-select {
+    position: relative;
+    border: 1px solid $borderColor;
+    border-radius: $controlBorderRadius;
+    padding: $controlPadding;
+    width: 100%;
+
+    .img {
+        background-image: url("../../../../assets/arrow-down.svg");
+        background-size: cover;
+        width: 10px;
+        height: 10px;
+        transition: transform 0.25s ease-in-out;
+    }
+
+    &:focus {
+        outline: none;
+
+        .options-container {
+            max-height: 9.1875rem;
+            opacity: 1;
+            z-index: 2;
+            animation: dropDownAnimation 0.35s forwards;
+        }
+
+        .img {
+            transform: rotate(540deg);
+        }
+    }
+
+    &:after {
+        content: "";
+        width: 100%;
+        height: 2rem;
+        background-color: transparent;
+        position: absolute;
+        bottom: -1rem;
+        left: 0;
+    }
+
+    &:hover {
+        cursor: pointer;
+    }
+}
+
+.options-container {
+    position: absolute;
+    padding: $controlPadding;
+    border: 1px solid $borderColor;
+    border-radius: $controlBorderRadius;
+    overflow-y: hidden;
+    overflow-x: hidden;
+    opacity: 0;
+    top: 2.3rem;
+    background-color: white;
+    width: inherit;
+    left: 0;
+    transition: max-height 0.25s, overflow-y 1s ease 0.3s;
+    max-height: 0px;
+    z-index: 1;
+}
+
+.my-option {
+    transition: 0.25s ease-in-out;
+    background-color: inherit;
+    border: 1px solid transparent;
+    border-radius: $controlBorderRadius;
+    padding: $controlPadding;
+    font-weight: 500;
+
+    &:hover {
+        background-color: #827397;
+        cursor: pointer;
+        color: white;
+    }
+}
+
+@keyframes dropDownAnimation {
+    0% {
+        overflow-y: hidden;
+    }
+    25% {
+        overflow-y: hidden;
+    }
+    50% {
+        overflow-y: hidden;
+    }
+    100% {
+        overflow-y: auto;
+    }
+}

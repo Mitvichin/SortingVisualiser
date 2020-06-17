@@ -1,0 +1,13 @@
+<div class="container-wrapper">
+<div class="container-wrapper" (click)="close()">
+    <div class="container-content" (click)="stopPropagation($event)" #content>
+        <div class="header">{{header}}</div>
+        <div class="content">
+            <ng-content></ng-content>
+        </div>
+        <div class="footer" (click)="close()">
+            <div class="btn btn-sm ">Close</div>
+        </div>
+    </div>
+
+</div>

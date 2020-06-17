@@ -1,1 +1,58 @@
 /* You can add global styles to this file, and also import other style files */
+
+html, body{
+    font-size: 16px !important;
+    height: 100%;
+    color: white;
+    user-select: none;
+}
+
+input:focus,
+select:focus,
+textarea:focus,
+button:focus {
+    outline: none !important;
+}
+
+// .comparedCouple {
+//     background-color: red !important;
+// }
+
+// .completed {
+//     background-color: purple !important;
+// }
+
+.default {
+    transition: 0.5s ease-in-out;
+    opacity: 0;
+    color:white;
+    font-size:1.2rem;
+    font-weight: 500;
+    height: 0px;
+    border: 1px solid transparent;
+    border-radius: .2rem;
+    text-align: center;
+    display: inline-block;
+    background-color: #827397;
+    position: relative;
+    
+    &:after,
+    &:before {
+        content: "";
+        position: absolute;
+        width: 0%;
+        height: 0;
+        left: 50%;
+        transform: translate(-50%);
+        background-color: white;
+        transition: 0.5s ease-in-out;
+    }
+
+    &:after {
+        bottom: 0;
+    }
+
+    &:before {
+        top: 0;
+    }
+}

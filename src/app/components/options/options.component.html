@@ -1,0 +1,11 @@
+<div class="options-wrapper d-flex justify-content-center">
+  <div class="col-8">
+    <div class="font-weight-bold">General</div>
+    <custom-select [options]="completedNumberColors" label="Completed number" (onChanged)="changeCompletedNumberColor($event)"></custom-select>
+    <custom-select [options]="compairedPairColors" label="Compared pair" (onChanged)="changeCompairedPairColor($event)"></custom-select>
+    <div class="font-weight-bold mt-3">Bubble sort</div>
+    <custom-select [options]="smallerNumberColors" label="Smaller number" (onChanged)="changeSmallerNumberColor($event)"></custom-select>
+    <div class="font-weight-bold mt-3">Quick sort</div>
+    <custom-select [options]="itemsToBeSwapedColors" label="Items to be swaped"></custom-select>
+  </div>
+</div>

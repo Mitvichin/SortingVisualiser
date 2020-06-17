@@ -1,0 +1,21 @@
+@import '../../shared/styles/constant-colors.scss';
+
+.swapIndex:after {
+   content: "";
+   position: absolute;
+   height: .5rem;
+   width: 101%;
+   bottom: -.7rem;
+   background-color: $swapIndexColor;
+   border-radius: .25rem;
+}
+
+.smallestNumber:before {
+   content: "";
+   position: absolute;
+   height: .5rem;
+   width: 101%;
+   top: -.7rem;
+   background-color: $smallestNumberColor;
+   border-radius: .25rem;
+}
