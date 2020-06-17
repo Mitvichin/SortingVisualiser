@@ -18,14 +18,14 @@ import { ModalComponent } from 'src/app/shared/components/modal/modal.component'
   styleUrls: ['./visualizer.component.scss']
 })
 export class VisualizerComponent extends BaseComponent implements OnInit {
-  private isBubbleSort: boolean = true;
-  private isQuickSort: boolean = false;
-  private isSelectionSort: boolean = false;
+  isBubbleSort: boolean = true;
+  isQuickSort: boolean = false;
+  isSelectionSort: boolean = false;
+  changeSourceBtnArr: string = ""; // used in the template
+  btnImgSource: string = "../../../assets/play-btn.png" // used in the template
+  arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
+  enablePlayBtn: boolean = true;
   private shouldUseInitialArr: boolean;
-  private changeSourceBtnArr: string = ""; // used in the template
-  private btnImgSource: string = "../../../assets/play-btn.png" // used in the template
-  private arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
-  private enablePlayBtn: boolean = true;
   private shouldStart: boolean;
   private shouldPause: boolean;
 
