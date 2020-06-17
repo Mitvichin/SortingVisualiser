@@ -1,0 +1,77 @@
+@import "../../shared/styles/constant-colors.scss";
+
+.swapIndexIndicator {
+    height: 0.2rem;
+    position: relative;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+
+    &:before {
+        content: "";
+        position: absolute;
+        height: 0.5rem;
+        width: 40px;
+        background-color: $swapIndexColor;
+        border-radius: 0.25rem;
+        top: 45%;
+        left: -1.5rem;
+    }
+}
+
+.smallestNumberIndicator {
+    height: 0.2rem;
+    position: relative;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+
+    &:before {
+        content: "";
+        position: absolute;
+        height: 0.5rem;
+        width: 40px;
+        background-color: $smallestNumberColor;
+        border-radius: 0.25rem;
+        top: 45%;
+        left: -1.5rem;
+    }
+}
+
+.pivotIndicator {
+    height: 0.2rem;
+    position: relative;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+
+    &:before {
+        content: "";
+        position: absolute;
+        height: 0.5rem;
+        width: 40px;
+        background-color: $pivotColor;
+        border-radius: 0.25rem;
+        top: 45%;
+        left: -1.5rem;
+    }
+}
+
+.endOfSmallerNumbersIndexIndicator {
+    height: 0.2rem;
+    position: relative;
+    margin-left: 1.5rem;
+    margin-right: 1.5rem;
+
+    &:before {
+        content: "";
+        position: absolute;
+        height: 0.5rem;
+        width: 40px;
+        background-color: $endOfSmallerNumbersIndexColor;
+        border-radius: 0.25rem;
+        top: 45%;
+        left: -1.5rem;
+    }
+}
+
+p{
+    margin-bottom: .1rem;
+}

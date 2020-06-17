@@ -16,6 +16,7 @@ import { BaseSortEffects } from './shared/base-effects/base-sort.effects';
 import { ModalComponent } from './shared/components/modal/modal.component';
 import { OptionsComponent } from './components/options/options.component';
 import { CustomSelectComponent } from './shared/components/custom-select/custom-select.component';
+import { InfoComponent } from './components/info/info.component';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { CustomSelectComponent } from './shared/components/custom-select/custom-
     ModalComponent,
     OptionsComponent,
     CustomSelectComponent,
+    InfoComponent,
   ],
   imports: [
     BrowserModule,

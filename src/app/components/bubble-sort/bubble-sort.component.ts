@@ -59,66 +59,89 @@ export class BubbleSortComponent extends BaseSortComponent implements OnInit, On
         await delay(this.iterationSpeed);
         this.illustrativeArr = [...el.startingArr];
 
-        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
-        this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
+        this.addCompairedPairColorClass(el);
 
         await delay(500);
         if (el.didSwap) {
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.smallerNumberColorClass);
-          await delay(500)
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
+          await this.swapElements(el);
         } else {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.smallerNumberColorClass);
+          this.indicateSmallerNumber(el.comparedCouple.indexX);
         }
 
         await delay(500);
         this.illustrativeArr = [...el.resultArr];
+
         if (el.didSwap) {
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '0s');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '0s');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", 'translate(0)');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", 'translate(0)');
-          delay(200);
+          this.preserveElementsLocation(el);
         }
 
-        await delay(200);
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.smallerNumberColorClass);
-        this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.smallerNumberColorClass);
+        await this.removeIndicatorColorClasses(el);
 
         if (el.didSwap) {
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '.5s ease-in-out');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '.5s ease-in-out');
+          this.addTransitionToElements(el);
         }
 
         if (el.isCompleted) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.completedNumberColorClass);
-          if (i === sortHistory.length - 1) {
-            this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.completedNumberColorClass);
-          }
+          this.markAsComplete(el, i, sortHistory);
         }
 
         this.currentIndex = ++this.currentIndex;
         this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
 
         if (this.shouldPause) {
-          this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
-          this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
+          this.pauseVisualization();
           return;
         }
       }
 
-      this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
-      this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
+      this.pauseVisualization();
     }
     // this will happen only if you dont stop the visualization by force
-    this.currentIndex = 0;
-    this.sortHistory = [];
-    this.isCompleted = true;
-    this.sortCompleted.emit();
+    this.afterSortIsCompleted();
+  }
+
+  private addCompairedPairColorClass(el: any) {
+    this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+    this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
+  }
+
+  private indicateSmallerNumber(index: number) {
+    this.renderer.removeClass(this.arrDomChildren[index], this.comparedPairColorClass);
+    this.renderer.addClass(this.arrDomChildren[index], this.smallerNumberColorClass);
+  }
+
+  private async swapElements(el: BubbleSortStep) {
+    this.indicateSmallerNumber(el.comparedCouple.indexY)
+    await delay(500);
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
+  }
+
+  private preserveElementsLocation(el: BubbleSortStep) {
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '0s');
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '0s');
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", 'translate(0)');
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", 'translate(0)');
+    delay(200);
+  }
+
+  private async removeIndicatorColorClasses(el: BubbleSortStep) {
+    await delay(200);
+    this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
+    this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
+    this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.smallerNumberColorClass);
+    this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.smallerNumberColorClass);
+  }
+
+  private addTransitionToElements(el: BubbleSortStep) {
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '.5s ease-in-out');
+    this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '.5s ease-in-out');
+  }
+
+  private markAsComplete(el: BubbleSortStep, i: number, sortHistory: BubbleSortStep[]) {
+    this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.completedNumberColorClass);
+    if (i === sortHistory.length - 1) {
+      this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.completedNumberColorClass);
+    }
   }
 }

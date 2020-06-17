@@ -23,7 +23,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   private isSelectionSort: boolean = false;
   private shouldUseInitialArr: boolean;
   private changeSourceBtnArr: string = ""; // used in the template
-  private btnImgSource: string ="../../../assets/play-btn.png" // used in the template
+  private btnImgSource: string = "../../../assets/play-btn.png" // used in the template
   private arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
   private enablePlayBtn: boolean = true;
   private shouldStart: boolean;
@@ -32,7 +32,8 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   @ViewChild(BubbleSortComponent) private bubbleSortComponent: BubbleSortComponent;
   @ViewChild(SelectionSortComponent) private selectionSortComponent: SelectionSortComponent;
   @ViewChild(QuickSortComponent) private quickSortComponent: QuickSortComponent;
-  @ViewChild(ModalComponent) private modalComponent: ModalComponent;
+  @ViewChild('optionsModal') private optionsModal: ModalComponent;
+  @ViewChild('infoModal') private infoModal: ModalComponent
   @ViewChild('sizeDropdown') private sizeDropdown: ElementRef;
 
   constructor(private store: Store<fromApp.AppState>, private renderer: Renderer2,
@@ -41,6 +42,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.generateNewArr(ArraySizeOption.medium)
     this.store.select(fromApp.StateSelector.selectVisualizer).pipe(takeUntil(this.$unsubscribe)).subscribe(storeData => {
       let data: typeof storeData = deepCopy(storeData);
 
@@ -56,7 +58,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
     })
   }
 
-  onSortCompleted(){
+  onSortCompleted() {
     this.btnImgSource = "../../../assets/play-btn.png";
   }
 
@@ -70,7 +72,9 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
 
   async generateNewArr(option: number) {
 
-    this.renderer.removeClass(this.sizeDropdown.nativeElement, "size-btn");
+    if (this.sizeDropdown) {
+      this.renderer.removeClass(this.sizeDropdown.nativeElement, "size-btn");
+    }
     this.detector.detectChanges();
 
     let tempArr: number[] = [];
@@ -78,7 +82,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       tempArr.push(Math.floor(Math.random() * 500))
     }
 
-    this.store.dispatch(new fromVisualizerActions.GenerateRandomArr(tempArr));
+    this.store.dispatch(new fromVisualizerActions.SaveRandomArr(tempArr));
   }
 
   async changeSourceArr() {
@@ -122,14 +126,18 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       if (this.isQuickSort) {
         this.quickSortComponent.sort();
       }
-    }else if(!this.shouldPause){
+    } else if (!this.shouldPause) {
       this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(true));
       this.btnImgSource = "../../../assets/play-btn.png";
     }
   }
 
-  openOptions(){
-    this.modalComponent.open();
+  openOptions() {
+    this.optionsModal.open();
+  }
+
+  openInfo() {
+    this.infoModal.open();
   }
 
   clickIfAllowed(callback: Function) {

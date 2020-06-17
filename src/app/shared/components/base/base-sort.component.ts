@@ -22,7 +22,7 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   @ViewChild('arrContainer', { read: ViewContainerRef }) protected arrContainerReff: ViewContainerRef;
   @Output() sortCompleted = new EventEmitter();
 
-  protected arrDomChildren: any = [];
+  protected arrDomChildren: any[] = [];
   protected itemSwapDistance: number = 0;
   protected DOMElWidth: number = 0;
   protected DOMElMargin: number = 2; //px
@@ -38,9 +38,9 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   protected shouldStart: boolean;
   protected shouldPause: boolean;
 
-  protected comparedPairColorClass:string;
-  protected completedNumberColorClass:string;
-  
+  protected comparedPairColorClass: string;
+  protected completedNumberColorClass: string;
+
   constructor(
     protected store: Store<fromApp.AppState>,
     protected renderer: Renderer2,
@@ -121,7 +121,7 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
     }
   }
 
-  async reset() {
+   async reset() {
     this.currentIndex = 0;
     this.isCompleted = false;
     if (this.sortHistory.length > 0) {
@@ -134,6 +134,18 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
     this.illustrativeArr = temp;
     await delay(50);
     calculateElementsHeight(this.renderer, this.arrDomChildren as HTMLElement[], this.DOMElMargin)
+  }
+
+  protected afterSortIsCompleted() {
+    this.currentIndex = 0;
+    this.sortHistory = [];
+    this.isCompleted = true;
+    this.sortCompleted.emit();
+  }
+
+  protected pauseVisualization() {
+    this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
+    this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
   }
 
   ngOnDestroy(): void {

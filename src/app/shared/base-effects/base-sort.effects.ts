@@ -8,5 +8,5 @@ export class BaseSortEffects {
     constructor(private $actions: Actions) { }
 
     @Effect({dispatch:false})
-    readonly $deleteSortHistory = this.$actions.pipe(ofType(VisualizerActions.GENERATE_RANDOM_ARR))
+    readonly $deleteSortHistory = this.$actions.pipe(ofType(VisualizerActions.SAVE_RANDOM_ARR))
 }

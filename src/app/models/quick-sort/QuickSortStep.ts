@@ -3,9 +3,8 @@ import { ComparedCouple } from '../shared/ComparedCouple';
 
 export class QuickSortStep extends BaseSortStep {
     constructor(public pivotIndex?: number,
-        public pivotValue?: number,
         public leftValueIndex?: number,
-        public rightValueIndex?: number,
+        public endOfSmallerNumbersIndex?: number,
         comparedCouple?: ComparedCouple,
         didSwap?: boolean,
         startingArr?: number[],

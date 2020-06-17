@@ -15,6 +15,8 @@ import { BaseSortEffects } from 'src/app/shared/base-effects/base-sort.effects';
   styleUrls: ['./selection-sort.component.scss']
 })
 export class SelectionSortComponent extends BaseSortComponent implements OnInit, OnDestroy {
+  private swapIndexClass = 'swapIndex';
+  private smallestNumberClass='smallestNumber';
 
   constructor(
     protected store: Store<fromApp.AppState>,
@@ -39,92 +41,115 @@ export class SelectionSortComponent extends BaseSortComponent implements OnInit,
   async visualise(sortHistory: SelectionSortStep[]) {
     this.DOMElWidth = (this.arrDomChildren[0] as HTMLElement).getBoundingClientRect().width + this.DOMElMargin * 2; // *2 because we have 2 sides with 2px margin
     sortHistory = sortHistory.splice(this.currentIndex, sortHistory.length); // splicing the original history incase the pause btn was pressed and we need to continue from where we paused
-    
+
     if (sortHistory.length > 0) {
       this.store.dispatch(new fromVisualizerActions.ChangeSourceArr(false));
       let smallestIndex = -1;
       //used for of because it can be async
-      for (const { i, el } of sortHistory.map((el, i) => ({ i, el }))) {
+      for (const { i, el: step } of sortHistory.map((el, i) => ({ i, el }))) {
 
-        this.itemSwapDistance = Math.abs(el.comparedCouple.indexX - el.comparedCouple.indexY) * this.DOMElWidth;
+        this.itemSwapDistance = Math.abs(step.comparedCouple.indexX - step.comparedCouple.indexY) * this.DOMElWidth;
         // increases the speed of the iteration
         await delay(this.iterationSpeed);
 
-        // initialises them temporary step
-        this.illustrativeArr = [...el.startingArr];
+        // initialises the temporary step
+        this.illustrativeArr = [...step.startingArr];
 
-        this.renderer.addClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
+        this.renderer.addClass(this.arrDomChildren[step.swapIndex], this.swapIndexClass);
         await delay(500)
         // visualizes the two compared numbers
-        if (!el.didSwap) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
+        if (!step.didSwap) {
+          this.addCompairedPairColorClass(step);
         }
 
-        if (smallestIndex !== el.minValueIndex && smallestIndex !== -1) {
-          await delay(200)
-          this.renderer.removeClass(this.arrDomChildren[smallestIndex], 'smallestNumber');
+        if (smallestIndex !== step.minValueIndex && smallestIndex !== -1) {
+          await this.removeSmallestIndexColorClass(smallestIndex);
         }
         // visualizes the swaping index in the array
         await delay(600)
-        smallestIndex = el.minValueIndex;
-        this.renderer.addClass(this.arrDomChildren[smallestIndex], 'smallestNumber')
+        smallestIndex = step.minValueIndex;
+        this.renderer.addClass(this.arrDomChildren[smallestIndex], this.smallestNumberClass)
 
-        if (el.didSwap) {
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
-          await delay(300)
-          this.renderer.removeClass(this.arrDomChildren[el.swapIndex], 'swapIndex');
+        if (step.didSwap) {
+          await this.swapElements(step);
         }
 
         await delay(500);
-        this.illustrativeArr = [...el.resultArr];
+        this.illustrativeArr = [...step.resultArr];
 
-        if (el.didSwap) {
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '0s');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '0s');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transform", 'translate(0)');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transform", 'translate(0)');
-          delay(200);
+        if (step.didSwap) {
+          this.preserveElementsLocation(step);
         }
 
         await delay(200);
-        if (!el.didSwap) {
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], this.comparedPairColorClass);
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexY], this.comparedPairColorClass);
+        if (!step.didSwap) {
+          this.removeCompairedPairClass(step);
         }
 
-        if (el.didSwap) {
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexX], "transition", '.5s ease-in-out');
-          this.renderer.setStyle(this.arrDomChildren[el.comparedCouple.indexY], "transition", '.5s ease-in-out');
+        if (step.didSwap) {
+          this.addTransitionToElements(step);
         }
 
-        if (el.isCompleted) {
-          this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.completedNumberColorClass);
-          this.renderer.removeClass(this.arrDomChildren[el.comparedCouple.indexX], 'smallestNumber');
-          if (i === sortHistory.length - 1) {
-            this.renderer.addClass(this.arrDomChildren[el.comparedCouple.indexX], this.completedNumberColorClass);
-            this.renderer.addClass(this.arrDomChildren[el.resultArr.length - 1], this.completedNumberColorClass);
-          }
+        if (step.isCompleted) {
+          this.markAsComplete(step, i, sortHistory);
         }
 
         this.currentIndex = ++this.currentIndex;
-        this.store.dispatch(new fromVisualizerActions.AddCurrentArr(el.resultArr));
-        
-        if (this.shouldPause){
-          this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
-          this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
+        this.store.dispatch(new fromVisualizerActions.AddCurrentArr(step.resultArr));
+
+        if (this.shouldPause) {
+          this.pauseVisualization();
           return;
-        } 
+        }
       }
 
-      this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(false));
-      this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(true));
+      this.pauseVisualization()
     }
     // this will happen only if you dont stop the visualization by force
-    this.currentIndex = 0;
-    this.sortHistory = [];
-    this.isCompleted = true;
-    this.sortCompleted.emit();
+    this.afterSortIsCompleted();
+  }
+
+  private async removeSmallestIndexColorClass(smallestIndex: number) {
+    await delay(200);
+    this.renderer.removeClass(this.arrDomChildren[smallestIndex], this.smallestNumberClass);
+  }
+
+  private addCompairedPairColorClass(step: SelectionSortStep) {
+    this.renderer.addClass(this.arrDomChildren[step.comparedCouple.indexX], this.comparedPairColorClass);
+    this.renderer.addClass(this.arrDomChildren[step.comparedCouple.indexY], this.comparedPairColorClass);
+  }
+
+  private async swapElements(step: SelectionSortStep) {
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexX], "transform", `translate(${this.itemSwapDistance}px)`);
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexY], "transform", `translate(-${this.itemSwapDistance}px)`);
+    await delay(300);
+    this.renderer.removeClass(this.arrDomChildren[step.swapIndex], this.swapIndexClass);
+  }
+
+  private preserveElementsLocation(step: SelectionSortStep) {
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexX], "transition", '0s');
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexY], "transition", '0s');
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexX], "transform", 'translate(0)');
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexY], "transform", 'translate(0)');
+    delay(200);
+  }
+
+  private removeCompairedPairClass(step: SelectionSortStep) {
+    this.renderer.removeClass(this.arrDomChildren[step.comparedCouple.indexX], this.comparedPairColorClass);
+    this.renderer.removeClass(this.arrDomChildren[step.comparedCouple.indexY], this.comparedPairColorClass);
+  }
+
+  private addTransitionToElements(step: SelectionSortStep) {
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexX], "transition", '.5s ease-in-out');
+    this.renderer.setStyle(this.arrDomChildren[step.comparedCouple.indexY], "transition", '.5s ease-in-out');
+  }
+
+  private markAsComplete(step: SelectionSortStep, i: number, sortHistory: SelectionSortStep[]) {
+    this.renderer.addClass(this.arrDomChildren[step.comparedCouple.indexX], this.completedNumberColorClass);
+    this.renderer.removeClass(this.arrDomChildren[step.comparedCouple.indexX], this.smallestNumberClass);
+    if (i === sortHistory.length - 1) {
+      this.renderer.addClass(this.arrDomChildren[step.comparedCouple.indexX], this.completedNumberColorClass);
+      this.renderer.addClass(this.arrDomChildren[step.resultArr.length - 1], this.completedNumberColorClass);
+    }
   }
 }

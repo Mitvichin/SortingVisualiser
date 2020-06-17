@@ -2,7 +2,7 @@ import { Action } from '@ngrx/store';
 import { BaseSortComponent } from 'src/app/shared/components/base/base-sort.component';
 
 export const ADD_CURRENT_ARR = 'ADD_CURRENT_ARR',
-    GENERATE_RANDOM_ARR = 'GENERATE_RANDOM_ARR',
+    SAVE_RANDOM_ARR = 'SAVE_RANDOM_ARR',
     CHANGE_SOURCE_ARR = 'CHANGE_SOURCE_ARR',
     SHOUD_PAUSE_VISUALIZATION = 'SHOUD_PAUSE_VISUALIZATION',
     SHOUD_START_VISUALIZATION = 'SHOUD_START_VISUALIZATION';
@@ -13,8 +13,8 @@ export class AddCurrentArr implements Action {
     constructor(public payload: number[]) { }
 }
 
-export class GenerateRandomArr implements Action {
-    readonly type = GENERATE_RANDOM_ARR;
+export class SaveRandomArr implements Action {
+    readonly type = SAVE_RANDOM_ARR;
 
     constructor(public payload: number[]) { }
 }
@@ -39,7 +39,7 @@ export class ShouldStartVisualization implements Action {
 
 export type VisualizerActions =
     AddCurrentArr
-    | GenerateRandomArr
+    | SaveRandomArr
     | ChangeSourceArr
     | ShouldPauseVisualization
     | ShouldStartVisualization;

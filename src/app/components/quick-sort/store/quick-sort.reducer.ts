@@ -14,11 +14,6 @@ const initialState: State = {
 
 export function quickSortReducer(state: State = initialState, action: fromQuickSortActions.QuickSortActions) {
     switch (action.type) {
-        case fromQuickSortActions.ADD_ARR:
-            return {
-                ...state,
-                currentArr: [...action.payload]
-            }
         case fromQuickSortActions.ADD_QUICK_SORT_HISTORY:
             return {
                 ...state,
