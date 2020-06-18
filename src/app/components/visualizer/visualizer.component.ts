@@ -42,6 +42,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
     private detector: ChangeDetectorRef) {
       super();
       this.imgName = this.playBtnImageName;
+    
   }
 
   ngOnInit(): void {
