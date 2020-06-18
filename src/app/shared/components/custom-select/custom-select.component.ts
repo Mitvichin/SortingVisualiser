@@ -29,13 +29,13 @@ export class CustomSelectComponent implements OnInit {
 
   }
 
-  private selectColor(value: Option) {
+   selectColor(value: Option) {
     this.selectedOption = value;
     this.onChanged.emit(value);
     this.hideDropdown(this.select.nativeElement)
   }
 
-  private async hideDropdown(el: any) {
+   async hideDropdown(el: any) {
     this.renderer.removeAttribute(el, 'tabindex')
     this.renderer.setAttribute(el, 'tabindex', '-1')
   }

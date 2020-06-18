@@ -12,10 +12,10 @@ import { ColorOptions } from 'src/app/shared/constants/color-options';
   styleUrls: ['./options.component.scss']
 })
 export class OptionsComponent implements OnInit {
-  private completedNumberColors: Option[] = [];
-  private compairedPairColors: Option[] = [];
-  private smallerNumberColors: Option[] = [];
-  private itemsToBeSwapedColors: Option[] = [];
+  completedNumberColors: Option[] = [];
+  compairedPairColors: Option[] = [];
+  smallerNumberColors: Option[] = [];
+  itemsToBeSwapedColors: Option[] = [];
   constructor(private store: Store<fromApp.AppState>) { }
 
   ngOnInit(): void {

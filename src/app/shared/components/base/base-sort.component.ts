@@ -1,4 +1,4 @@
-import { OnDestroy, ViewChild, ElementRef, Renderer2, ChangeDetectorRef, Component, AfterViewInit, OnInit, ViewContainerRef, Output, EventEmitter } from '@angular/core';
+import { OnDestroy, ViewChild, ElementRef, Renderer2, ChangeDetectorRef, Component, AfterViewInit, OnInit, ViewContainerRef, Output, EventEmitter, Optional, Inject } from '@angular/core';
 import { calculateElementsHeight } from '../../utils/calculate-elements-height';
 import { BaseComponent } from './base.component';
 import { Store } from '@ngrx/store';
@@ -11,10 +11,10 @@ import { BaseState } from '../../interfaces/BaseState';
 import * as fromVisualizerActions from '../../../components/visualizer/store/visualizer.actions';
 import { deepCopy } from '../../utils/deep-copy';
 import { delay } from '../../utils/delay';
-import { Actions, ofType } from '@ngrx/effects'
 import { BaseSortEffects } from '../../base-effects/base-sort.effects';
 
 @Component({
+  templateUrl:'./base-template.component.html',
   selector: 'base-sort',
 })
 export abstract class BaseSortComponent extends BaseComponent implements OnInit, AfterViewInit, OnDestroy {
@@ -27,7 +27,6 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   protected DOMElWidth: number = 0;
   protected DOMElMargin: number = 2; //px
   protected iterationSpeed: number = 0; // in milliseconds
-  protected illustrativeArr: number[];
   protected initialArr: number[];
   protected currentArr: number[];
   protected shouldUseInitialArr: boolean;
@@ -37,7 +36,8 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
   protected isCompleted: boolean = false;
   protected shouldStart: boolean;
   protected shouldPause: boolean;
-
+  illustrativeArr: number[];
+  
   protected comparedPairColorClass: string;
   protected completedNumberColorClass: string;
 
@@ -47,8 +47,8 @@ export abstract class BaseSortComponent extends BaseComponent implements OnInit,
     protected detector: ChangeDetectorRef,
     protected sortService: SortService,
     protected baseEffects: BaseSortEffects,
-    private storeDeleteAction: any,
-    private selector: (state: fromApp.AppState) => BaseState
+    @Inject(String) private storeDeleteAction?: any,
+    @Inject(Function) private selector?: (state: fromApp.AppState) => BaseState
   ) {
     super();
   }

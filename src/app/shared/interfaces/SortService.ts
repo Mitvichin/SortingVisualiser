@@ -1,3 +1,3 @@
-export interface SortService {
-    sort(arr:number[]):void
+export abstract class SortService {
+    sort: (arr: number[]) => void
 }
