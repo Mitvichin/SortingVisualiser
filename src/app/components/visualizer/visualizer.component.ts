@@ -18,13 +18,13 @@ import { ModalComponent } from 'src/app/shared/components/modal/modal.component'
   styleUrls: ['./visualizer.component.scss']
 })
 export class VisualizerComponent extends BaseComponent implements OnInit {
-  readonly playBtnImageName: string=  'play-btn.png';
-  readonly pauseBtnImageName:string = 'pause-btn.png';
+  readonly playBtnImageSource: string=  'assets/play-btn.png';
+  readonly pauseBtnImageSource:string = 'assets/pause-btn.png';
+  imgSource:string;
   isBubbleSort: boolean = true;
   isQuickSort: boolean = false;
   isSelectionSort: boolean = false;
   changeSourceBtnArr: string = ""; // used in the template
-  imgName:string;
   arrSizeOptions: typeof ArraySizeOption = ArraySizeOption; // used in the template
   enablePlayBtn: boolean = true;
   private shouldUseInitialArr: boolean;
@@ -41,7 +41,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   constructor(private store: Store<fromApp.AppState>, private renderer: Renderer2,
     private detector: ChangeDetectorRef) {
       super();
-      this.imgName = this.playBtnImageName;
+      this.imgSource = this.playBtnImageSource;
     
   }
 
@@ -63,7 +63,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
   }
 
   onSortCompleted() {
-    this.imgName = this.playBtnImageName;
+    this.imgSource = this.playBtnImageSource;
   }
 
   addSizeBtnHoverClass() {
@@ -118,7 +118,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
 
     if (this.shouldStart) {
       this.store.dispatch(new fromVisualizerActions.ShouldStartVisualization(false));
-      this.imgName = this.pauseBtnImageName;
+      this.imgSource = this.pauseBtnImageSource;
       if (this.isBubbleSort) {
         this.bubbleSortComponent.sort();
       }
@@ -132,7 +132,7 @@ export class VisualizerComponent extends BaseComponent implements OnInit {
       }
     } else if (!this.shouldPause) {
       this.store.dispatch(new fromVisualizerActions.ShouldPauseVisualization(true));
-      this.imgName = this.playBtnImageName;
+      this.imgSource = this.playBtnImageSource;
     }
   }
 

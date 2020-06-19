@@ -20,7 +20,7 @@
             <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateSelectionSort)">Selection sort</div>
             <div class="btn btn-sm mx-2" [ngClass]="{'allowed': isAllowed()}" (click)="clickIfAllowed(activateQuickSort)">Quick sort</div>
             <div class="btn btn-sm ml-2 d-flex justify-content-center align-items-center" [ngClass]="{'allowed': enablePlayBtn}" (click)="clickIfEnable(sort)"><img
-                    class="play-img" [src]="'../../../assets/' + imgName" alt="Sort"></div>
+                    class="play-img" [src]="imgSource" alt="Sort"></div>
         </div>
     </div>
     <div class="content">
