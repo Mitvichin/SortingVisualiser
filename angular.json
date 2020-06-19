@@ -58,7 +58,7 @@
                   "maximumError": "5mb"
                 }
               ],
-              "baseHref": "/SortingVisualiser"
+              "baseHref": "https://mitvichin.github.io/SortingVisualiser/"
             }
           }
         },
